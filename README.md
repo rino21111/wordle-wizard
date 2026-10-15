@@ -1,3 +1,3 @@
-# Wordle World
+# Wordle Wizard
 
-Play it at https://rino21111.github.io/wordle-world/
+Play it at https://rino21111.github.io/wordle-wizard/
