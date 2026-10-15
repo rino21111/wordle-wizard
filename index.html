@@ -132,7 +132,7 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 #hSeals.fly { animation: fly .5s ease 2; }
 @media (max-width: 400px) { .hud { gap: 9px; } .logo .l1 { font-size: 17px; } }
 
-/* ---------- the margins: curses down the left, boons down the right; tap one for its note ---------- */
+/* ---------- the margins: boons down the left, curses down the right; tap one for its note ---------- */
 .rail {
   position: absolute; top: 0; bottom: 0; z-index: 2; width: 30px; box-sizing: border-box;
   display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 4px 2px 6px;
@@ -140,8 +140,8 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 }
 .rail::-webkit-scrollbar { display: none; }
 .rail.more { padding-bottom: 20px; scroll-padding-block-end: 26px; -webkit-mask-image: linear-gradient(#000 calc(100% - 24px), transparent); mask-image: linear-gradient(#000 calc(100% - 24px), transparent); }
-#railL { left: 0; }
-#railR { right: 0; }
+#railB { left: 0; }
+#railC { right: 0; }
 .ico {
   flex: none; position: relative; width: 26px; height: 26px; box-sizing: border-box; padding: 0; margin: 0;
   display: grid; place-items: center; cursor: pointer; font: inherit;
@@ -652,7 +652,7 @@ header { display: flex; align-items: center; justify-content: space-between; gap
     </div>
   </header>
   <div id="timer" hidden><i></i></div>
-  <div id="stage"><div id="rose" aria-hidden="true"></div><div id="railL" class="rail" role="group" aria-label="Your curses"></div><div id="boardWrap"><div id="board"></div></div><div id="railR" class="rail" role="group" aria-label="Your boons"></div></div>
+  <div id="stage"><div id="rose" aria-hidden="true"></div><div id="railB" class="rail" role="group" aria-label="Your boons"></div><div id="boardWrap"><div id="board"></div></div><div id="railC" class="rail" role="group" aria-label="Your curses"></div></div>
   <button id="log" type="button" title="Your glosses"><span class="lead" aria-hidden="true"></span><span class="chips"></span><span class="count"></span></button>
   <div id="belt"></div>
   <div id="kb"></div>
@@ -1037,7 +1037,7 @@ function fitTiles() {
   const wrap = $('boardWrap'), gap = 5, rows = maxGuesses();
   // a quaking lectern rocks the board a few px each way: keep that clear of the rails too
   const quake = count('quake') && !matchMedia('(prefers-reduced-motion: reduce)').matches ? 8 : 0;
-  const side = Math.max(30, $('railL').offsetWidth) + quake, w = wrap.clientWidth - 2 * side, h = wrap.clientHeight - 10;
+  const side = Math.max(30, $('railB').offsetWidth) + quake, w = wrap.clientWidth - 2 * side, h = wrap.clientHeight - 10;
   const t = Math.max(20, Math.floor(Math.min(62, (w - gap * (S.len - 1)) / S.len, (h - gap * (rows - 1)) / rows)));
   document.documentElement.style.setProperty('--tile', t + 'px');
   // the rosette sits behind the board, a little larger than it, never larger than the stage
@@ -1109,7 +1109,7 @@ function renderHud() {
   const chaos = Math.min(1, (S.curses.length + S.bossCurses.length) / 7);
   document.documentElement.style.setProperty('--chaos', chaos.toFixed(2));
 }
-// ---------- the margins: the beasts and curses on you down the left, your boons down the right ----------
+// ---------- the margins: your boons down the left, the beasts and curses on you down the right ----------
 // each is a little picture; hover or tap it for its note (the label says how many, and whether it is held off)
 const DOT = G('<circle cx="12" cy="12" r="6.5"/>');
 const boonIcon = id => GLYPH[id] || BOON_GLYPH[id] || DOT, curseIcon = id => CURSE_GLYPH[id] || DOT;
@@ -1141,11 +1141,11 @@ function renderRails() {
       R.push(btn(`boon r-${pk.rarity}`, 'p:' + id, pk.name, `${RARITY[pk.rarity] ? RARITY[pk.rarity] + ' boon' : 'Boon'}${S.perks[id] > 1 ? ' · ×' + S.perks[id] : ''}`, boonIcon(id), S.perks[id]));
     }
   }
-  $('railL').innerHTML = L.join(''); $('railR').innerHTML = R.join('');
+  $('railC').innerHTML = L.join(''); $('railB').innerHTML = R.join(''); // L: against you, R: yours
   railMore();
 }
 function railMore() {
-  for (const r of [$('railL'), $('railR')]) { r.classList.remove('more'); r.classList.toggle('more', r.scrollHeight > r.clientHeight + 1); }
+  for (const r of [$('railB'), $('railC')]) { r.classList.remove('more'); r.classList.toggle('more', r.scrollHeight > r.clientHeight + 1); }
 }
 const BOSS_TIPS = {
   king: ['The Drollery King', 'The Drollery King writes your first and third lines. This folio only.'],
@@ -1158,7 +1158,7 @@ function announceCurses(ids, tail = '', lead = '') {
   if (!ids.length) return;
   const ms = 3400 + (tail ? 1200 : 0) + (lead ? 1200 : 0);
   if (ids.length === 1) return toast(`${lead}\u2020 A curse is written: ${CURSES[ids[0]].name}. ${CURSES[ids[0]].desc(rawCount(ids[0]))}${tail}`, ms);
-  toast(`${lead}\u2020 ${cap1(NUMW[ids.length] || String(ids.length))} curses are written: ${ids.map(id => CURSES[id].name).join(', ')}. They sit down the left of the page; tap one to read it.${tail}`, ms);
+  toast(`${lead}\u2020 ${cap1(NUMW[ids.length] || String(ids.length))} curses are written: ${ids.map(id => CURSES[id].name).join(', ')}. They sit down the right of the page; tap one to read it.${tail}`, ms);
 }
 
 // a timeout that holds while a note on its words is open, then resumes with at least `min` ms left
@@ -2759,8 +2759,8 @@ function kwInit() { // lazy: BOSS_TIPS and S must exist first
   add('b:20', bossName(20), 'Beast · folio 20', 'A Grave and a Major curse for its folio. When it leaves, it eats a line for good.', [bare(bossName(20))]);
   add('b:25', bossName(25), 'Beast · folio 25, then every fifth', 'A Grave and a Major curse for its folio. At 25, when it leaves, it eats a line for good.', [bare(bossName(25))]);
   add('charm', 'Charms', '', 'Tools on the belt under the page. The belt holds five charges in all. Tap one to read it, then Use it or drag it up.', both('charm', 'charms'), true);
-  add('boon', 'Boons', '', 'Blessings you choose after a solved word. You keep six at most; yours sit down the right of the page.', both('boon', 'boons'), true);
-  add('curse', 'Curses', '', 'Lasting hindrances. You choose one at folios 6 and 8, and from folio 11 one arrives most folios. Yours sit down the left of the page.',
+  add('boon', 'Boons', '', 'Blessings you choose after a solved word. You keep six at most; yours sit down the left of the page.', both('boon', 'boons'), true);
+  add('curse', 'Curses', '', 'Lasting hindrances. You choose one at folios 6 and 8, and from folio 11 one arrives most folios. Yours sit down the right of the page.',
     [...both('curse', 'curses'), 'Minor curse', 'Major curse', 'Grave curse'], true);
   add('seal', 'Seals', 'Your lives', 'From folio 5 a missed word breaks a seal, and the book ends when the last one breaks.', both('seal', 'seals'), true);
   add('folio', 'Folios', '', 'A page of the book, with one Word to find. In folios 1-4 a miss costs no seal, but pays nothing.', both('folio', 'folios'), true);
@@ -2867,7 +2867,7 @@ function hideTip() {
 function placeTip() {
   const tip = $('tip'), r = tipFor.getClientRects()[0], m = 8, gap = 9, rail = tipFor.closest('.rail');
   if (rail) {
-    const left = rail.id === 'railL', x = left ? r.right + gap : null;
+    const left = rail.id === 'railB', x = left ? r.right + gap : null;
     tip.style.maxWidth = Math.min(280, left ? innerWidth - m - x : r.left - gap - m) + 'px';
     const w = tip.offsetWidth, h = tip.offsetHeight, cy = r.top + r.height / 2;
     const y = Math.round(Math.min(innerHeight - m - h, Math.max(m, cy - h / 2)));
