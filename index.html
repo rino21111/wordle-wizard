@@ -763,13 +763,13 @@ const PERKS = {
   mulligan:  { name: 'Penknife',         rarity: 'rare', max: 1, desc: 'Once per word, scrape away your last line if it shows no green. The type case keeps what it was shown.' },
   dowse:     { name: 'Pendulum',         rarity: 'rare', max: 1, desc: 'Once per word, swing it over a letter of your typed line: it dips if the letter sits there, trembles if it is elsewhere in the Word, and hangs still if it is absent.' },
   piggy:     { name: 'Alms Box',         rarity: 'rare', max: 1, desc: 'Solve with two lines or more to spare and the box keeps one. Run out of lines on a later word and it pays it out.' },
-  relic:     { name: 'Reliquary of St. Bryan', rarity: 'rare', max: 1, from: 5, ok: () => S.faith >= 3, desc: 'Every sixth BRYAN you offer him mends a seal, if you hold fewer than two. Then it is empty until you beat a beast.' },
-  shield:    { name: 'Fresh Wax',        rarity: 'rare', instant: true, ok: () => S.round >= 5 && S.lives < 2 && S.round >= (S.waxNext || 0), desc: 'Gain a seal. A missed word breaks a seal instead of ending the book.' },
+  relic:     { name: 'Reliquary of St. Bryan', rarity: 'rare', max: 1, from: 5, beast: true, ok: () => S.faith >= 3, desc: 'Every sixth BRYAN you offer him mends a seal, if you hold fewer than two. Then it is empty until you beat a beast.' },
+  shield:    { name: 'Fresh Wax',        rarity: 'rare', instant: true, beast: true, ok: () => S.round >= 5 && S.lives < 2 && S.round >= (S.waxNext || 0), desc: 'Gain a seal. A missed word breaks a seal instead of ending the book.' },
   lens:      { name: 'Reading Stone',    rarity: 'rare', max: 1, counter: ['fog', 'liar', 'blind'], desc: 'Your first line on each word sees through Censer Smoke, the Lying Scribe and Muddied Pigments.' },
   cleanse:   { name: 'Exorcism',         rarity: 'rare', instant: true, ok: () => S.curses.some(c => CURSES[c].tier !== 'nasty') && S.round >= (S.exoNext || 0), desc: 'Cast out one of your Minor or Major curses.' },
   phoenix:   { name: 'Phoenix Quill',    rarity: 'legendary', max: 1, ok: () => !S.quillBurned, desc: 'The first time you run out of lines, write two more. Then the quill burns.' },
   vowels:    { name: 'Vowel Lamps',      rarity: 'legendary', max: 1, desc: "After your first line on each word, the Word's vowels glow in the type case." },
-  pact:      { name: 'The Red-Ink Pact', rarity: 'legendary', instant: true, ok: () => S.round >= 5 && S.lives < 2 && S.curses.length <= 4, desc: 'Gain two seals now. Take two extra curses next folio.' },
+  pact:      { name: 'The Red-Ink Pact', rarity: 'legendary', instant: true, beast: true, ok: () => S.round >= 5 && S.lives < 2 && S.curses.length <= 4, desc: 'Gain two seals now. Take two extra curses next folio.' },
   oracle:    { name: 'Foresight',        rarity: 'legendary', max: 1, needs: ['hint'], desc: 'Every word starts with one letter already gilded. Your Gild is melted down to pay for it, with any boon that serves it.' },
 };
 const RARITY = { common: '', rare: 'Rare', legendary: 'Legendary' };
@@ -794,8 +794,8 @@ const ITEMS = {
 const ITEM_ORDER = Object.keys(ITEMS);
 const capOf = id => ITEMS[id].cap + (id === 'hint' && has('beater') ? 1 : 0) + (id === 'chat' && has('bryanBless') ? 1 : 0);
 const gildMax = () => 1 + has('beater');
-// the belt holds five charges in all (Bryan's favours sit outside it); you keep six lasting boons; his ransom is six BRYANs
-const BELT_CAP = 5, BOON_CAP = 6, RANSOM = 6;
+// the belt holds five charges in all (Bryan's favours sit outside it); you keep six lasting boons; his ransom is four BRYANs
+const BELT_CAP = 5, BOON_CAP = 6, RANSOM = 4;
 const beltTotal = () => ITEM_ORDER.reduce((a, id) => a + (id === 'chat' ? 0 : S.items[id] || 0), 0);
 const boonIds = () => Object.keys(S.perks).filter(id => S.perks[id] && PERKS[id] && !PERKS[id].instant && !PERKS[id].niche && !PERKS[id].spoil);
 // one line each; the limits are told when you meet them
@@ -1990,7 +1990,7 @@ const QUIPS = ['Honestly, though? Bryan.', 'Not Bryan, alas.', 'The ink is still
 
 // ---------- Brother Bryan: one clue a call, each answer a favour; write BRYAN to earn one ----------
 const heldReading = () => S.prayers >= RANSOM ? `The ransom is paid. He will be back on folio ${returnAt()}, when he finds the door.`
-  : `Held by the Drollery King. A note in his hand: help.${S.w.realBryan ? ' Also, it is me. It is literally me.' : ''} Ransom: six BRYANs, one a word. You have offered ${S.prayers}.`;
+  : `Held by the Drollery King. A note in his hand: help.${S.w.realBryan ? ' Also, it is me. It is literally me.' : ''} Ransom: four BRYANs, one a word. You have offered ${S.prayers}.`;
 // paid, he walks back three folios later (never before folio 8)
 const returnAt = () => Math.max(8, (S.paidAt || S.round) + 3);
 function callBryan(sure) {
@@ -2045,10 +2045,8 @@ function bless(n, feast = false, offering = true) {
 }
 function returnBanner(next) {
   S.bryanState = 'returned'; S.items.chat = 1; S.returnedAt = S.round;
-  // the seal he lent you at folio 5 goes back to him (never your last)
-  const took = S.lives > 1; if (took) S.lives--;
   flyNext.push('chat'); renderHud(); renderBelt();
-  banner(`${emblem('primer')}<div class="eyebrow2">Folio ${S.round}</div><div class="big">The Return of Brother Bryan</div><div class="small">"I escaped. It was mostly walking." He brings one favour${took ? ', and takes back the seal he lent you. He is sorry. He needs it' : ''}.</div>`, '', took ? 3600 : 3000, next);
+  banner(`${emblem('primer')}<div class="eyebrow2">Folio ${S.round}</div><div class="big">The Return of Brother Bryan</div><div class="small">"I escaped. It was mostly walking." He brings one favour.</div>`, '', 3000, next);
 }
 
 // ---------- the Index ----------
@@ -2399,6 +2397,7 @@ function offerPerks(mode) {
     if (p.counter && !p.counter.some(c => carried.has(c))) return false;
     if (p.needs && !p.needs.some(isLive)) return false;
     if (p.style && !(mode === null && S.round === 2)) return false; // the styles are folio 2's alone
+    if (p.beast && mode !== 'boss') return false; // seals come only from a beaten beast
     if (!p.spoil !== (mode !== 'spoils')) return false; // spoils cards deal only on the spoils leaf
     if (mode !== 'legendary' && !p.niche && !p.spoil && S.round < fromOf(id)) return false;
     return true;
@@ -2580,13 +2579,13 @@ const RANSOM_FONTS = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'], RANSOM_BGS = ['b1', '
 function ransom(text) {
   return `<div class="ransom">${text.split(' ').map(w => `<span class="w">${[...w].map(ch => `<span class="${pick(RANSOM_FONTS)} ${pick(RANSOM_BGS)}" style="transform:rotate(${(Math.random() * 14 - 7).toFixed(1)}deg)">${esc(ch)}</span>`).join('')}</span>`).join('')}</div>`;
 }
-// folio 5: the Drollery King carries Brother Bryan off (he leaves his seal, and takes his favours)
+// folio 5: the Drollery King carries Brother Bryan off, and his favours with him
 let flyNext = [];
 function kidnap(next) {
-  S.lives++; S.bryanState = 'kidnapped'; S.items.chat = 0; S.prayers = 0;
+  S.bryanState = 'kidnapped'; S.items.chat = 0; S.prayers = 0;
   flyNext = ['seals'];
   renderHud(); renderBelt();
-  banner(`${emblem('king')}<div class="eyebrow2">Folio 5</div><div class="big">The Drollery King</div><div class="small">He has carried off Brother Bryan, who lent you his seal and took his favours with him. You hold two seals now: a missed word breaks one, and the book ends with the last. Ransom: six BRYANs offered, one a word. Paid, he walks back three folios later, and wants his seal back.</div>`, '', 3600, next);
+  banner(`${emblem('king')}<div class="eyebrow2">Folio 5</div><div class="big">The Drollery King</div><div class="small">He has carried off Brother Bryan, and his favours with him. From here a missed word breaks a seal, and you hold just one. Ransom: four BRYANs offered, one a word. Paid, he walks back three folios later.</div>`, '', 3600, next);
 }
 const aetherBanner = next => banner(`${emblem('aether')}<div class="eyebrow2">Folio 10</div><div class="big">The Aether Is Down</div><div class="small">${S.bryanState === 'kidnapped' ? 'The spirits cannot reach you this folio, and with Brother Bryan still held, the Censer Smoke rolls in.' : 'The spirits cannot reach you this folio. Not even Bryan.'}</div>`, '', 3000, next);
 function bossLeaf(next) {
@@ -2718,6 +2717,8 @@ function migrate(r) {
   for (const [k, v] of [['paidAt', 0], ['relicDry', false], ['melted', false], ['ordealSeal', false]]) if (r[k] == null) r[k] = v;
   r.w.aiming = r.w.sketching = r.w.dowsing = false;
   r.curses = (r.curses || []).filter(c => CURSES[c]); r.bossCurses = (r.bossCurses || []).filter(c => CURSES[c]); // the Long Psalm is gone
+  // the ransom fell from six BRYANs to four: what was offered still counts, and a ransom it now covers is paid today
+  if (r.bryanState === 'kidnapped' && (r.prayers || 0) >= RANSOM) { r.prayers = RANSOM; if (!r.paidAt) r.paidAt = r.round; }
   return r;
 }
 const savedRun = () => { const r = store.get('ww-run', null); return r && r.phase === 'play' && r.w && r.items && r.round ? migrate(r) : null; };
@@ -2778,7 +2779,7 @@ function kwInit() { // lazy: BOSS_TIPS and S must exist first
     () => S.bryanState === 'kidnapped' ? heldReading() : S.bryanState === 'returned' ? 'Back from the King. Call him for a clue: each answer costs a favour, and a BRYAN line offered to him earns one.'
       : 'Your mentor. Call him for a clue: each answer costs a favour, and a BRYAN line offered to him earns one.', ['Brother Bryan']);
   add('favour', 'Favours', "Brother Bryan's price", () => `Each answer from Brother Bryan costs one. Your first BRYAN on a word earns one, and he keeps that line: it shows nothing. He can owe you ${NUMW[capOf('chat')]}. With none, he writes BRYAN on your next line himself, and keeps it.`, both('favour', 'favours'), true);
-  add('ransom', 'The ransom', '', 'Six BRYANs offered, one a word, while the King holds Brother Bryan (a feast-day BRYAN counts twice, and keeps its pigments). Paid, he walks back three folios later, never before folio 8, and takes back the seal he lent you (never your last).', both('ransom'), true);
+  add('ransom', 'The ransom', '', 'Four BRYANs offered, one a word, while the King holds Brother Bryan (a feast-day BRYAN counts twice, and keeps its pigments). Paid, he walks back three folios later, never before folio 8.', both('ransom'), true);
   add('spoils', 'Spoils', '', 'On a folio with no boon, a solved word offers a charge for two of your charms with room: tap one. With room in only one, it is simply yours.', both('spoils'), true);
   add('offer', 'An offering', "Brother Bryan's price", 'A BRYAN that earns a favour (or a prayer while he is held) is his: he keeps the line, and it shows no pigments. On his feast day it keeps them.', both('offering', 'offerings'), true);
   add('belt', 'The belt', '', "Holds five charges in all. Brother Bryan's favours sit outside it.", both('belt'), true);
@@ -3000,7 +3001,7 @@ function startRestored() {
   if (S.rows.length >= maxGuesses()) return outOfRows();
   runQueue();
 }
-window.ww = { get S() { return S; }, get busy() { return busy; }, candidates: () => candidates(), seen: () => seenCandidates(), advance: () => advance(), startRound: () => startRound(), rung: n => { const r = rung(n); return r && Object.fromEntries(Object.entries(r).map(([k, v]) => [k, typeof v === 'string' ? sqFix(v) : v])); }, lines: () => maxGuesses(), ruleBreak: w => ruleBreak(w), belt: () => beltTotal(), boons: () => boonIds(), gildAt: i => gildAt(i), seek: ch => seekLetter(ch), sketch: w => { if (!S.w.sketching) startSketch(); return S.w.sketching ? sketch(w) : undefined; }, call: sure => callBryan(sure), dowseAt: i => dowseAt(i), index: part => openIndex(part), seenGreens: () => [...seenGreens()], fit: () => fitN(), use: id => useSlot(id), redraw: () => { renderBelt(); renderHud(); renderKb(); }, keys: () => keyStates(), toast: (m, ms) => toast(m, ms), modal: (h, c, x) => modal(h, c, x) }; // handy for debugging and tests
+window.ww = { get S() { return S; }, get busy() { return busy; }, candidates: () => candidates(), seen: () => seenCandidates(), advance: () => advance(), startRound: () => startRound(), offer: m => offerPerks(m), rung: n => { const r = rung(n); return r && Object.fromEntries(Object.entries(r).map(([k, v]) => [k, typeof v === 'string' ? sqFix(v) : v])); }, lines: () => maxGuesses(), ruleBreak: w => ruleBreak(w), belt: () => beltTotal(), boons: () => boonIds(), gildAt: i => gildAt(i), seek: ch => seekLetter(ch), sketch: w => { if (!S.w.sketching) startSketch(); return S.w.sketching ? sketch(w) : undefined; }, call: sure => callBryan(sure), dowseAt: i => dowseAt(i), index: part => openIndex(part), seenGreens: () => [...seenGreens()], fit: () => fitN(), use: id => useSlot(id), redraw: () => { renderBelt(); renderHud(); renderKb(); }, keys: () => keyStates(), toast: (m, ms) => toast(m, ms), modal: (h, c, x) => modal(h, c, x) }; // handy for debugging and tests
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 })();
 </script>
