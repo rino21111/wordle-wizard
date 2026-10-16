@@ -40,6 +40,8 @@
   --rosette: .36;
   /* the Underdrawing panel is always candlelit */
   --code-bg: #1d130c; --code-fg: #ecdcbb; --code-cm: #b59b76; --code-str: #dfb75e; --code-line: #3a2a1d;
+  /* fresh iron-gall ink is blue-black until it dries (Wet Ink); the Wyrm's dark line is darker still */
+  --wet: #22202b; --wet-on: #e6dbc4; --night: #0c0806; --night-on: #6e5c49;
 
   --display: "Cormorant SC", "Cormorant Garamond", Georgia, serif;
   --text: "EB Garamond", Garamond, "Times New Roman", Georgia, serif;
@@ -61,6 +63,7 @@
     --verm-fill: #b8432a; --mal-fill: #2c7250;
     --on-deep: #f7ecd2; --on-pale: #1c1008;
     --glow: rgba(214, 120, 50, .26); --veil: rgba(21, 13, 10, .88); --shadow: rgba(0, 0, 0, .5); --rosette: .3;
+    --wet: #2b2a38; --wet-on: #ecdcbb; --night: #040202; --night-on: #5f4d3c;
     color-scheme: dark;
   }
 }
@@ -72,6 +75,7 @@
   --verm-fill: #b8432a; --mal-fill: #2c7250;
   --on-deep: #f7ecd2; --on-pale: #1c1008;
   --glow: rgba(214, 120, 50, .26); --veil: rgba(21, 13, 10, .88); --shadow: rgba(0, 0, 0, .5); --rosette: .3;
+  --wet: #2b2a38; --wet-on: #ecdcbb; --night: #040202; --night-on: #5f4d3c;
   color-scheme: dark;
 }
 
@@ -160,9 +164,13 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 .ico.boss, .ico.beast { color: var(--on-deep); background: var(--verm-fill); border-color: var(--vermilion); }
 .ico.beast { border-radius: 3px; }
 .ico.feast { color: var(--on-pale); background: var(--gilt-hi); border-color: var(--gilt); }
+.ico.fair { color: var(--on-deep); background: var(--lapis); border-color: var(--lapis); } /* the Relic Fair: on your side, for once */
 .ico.held { border-style: dashed; background: var(--leaf); } .ico.held svg { opacity: .45; } /* held off for now */
 .ico.new { animation: icoNew 1.2s ease 2; } /* a curse just written */
 @keyframes icoNew { 0%, 50% { opacity: .3; transform: scale(1.15); } 25%, 75%, 100% { opacity: 1; transform: none; } }
+.ico.loose { box-shadow: 0 0 7px 1px color-mix(in srgb, var(--gilt-hi) 60%, transparent); } /* the Will-o'-the-Wisp, not caught yet */
+.ico.loose svg { animation: wisp 2.2s ease-in-out infinite; }
+@keyframes wisp { 0%, 70%, 100% { opacity: 1; transform: none; } 18% { opacity: .35; } 30% { opacity: .95; } 50% { opacity: .5; transform: translate(.7px, -.7px); } }
 /* a boon is a little plate, coloured like its card */
 .ico.boon.r-rare { color: var(--lapis); border-color: color-mix(in srgb, var(--lapis) 60%, transparent); }
 .ico.boon.r-legendary { color: var(--gilt-ink); border-color: var(--gilt); background: color-mix(in srgb, var(--gilt-hi) 18%, var(--leaf)); }
@@ -243,6 +251,21 @@ header { display: flex; align-items: center; justify-content: space-between; gap
   border: 1px solid color-mix(in srgb, var(--ink) 40%, transparent); color: var(--ink);
 }
 .tile.burn { background: transparent; border: 1px dashed var(--vermilion); color: var(--vermilion); }
+/* the Catena: a line that breaks the chain is written in plain ink, ruled like a pigment but with none in it */
+.tile.plain {
+  border: 1.5px solid var(--ink-soft); color: var(--ink); background: color-mix(in srgb, var(--ink) 6%, var(--bg));
+  box-shadow: inset 0 0 0 3px var(--bg), inset 0 0 0 4px color-mix(in srgb, var(--ink) 20%, transparent);
+}
+/* Wet Ink: the letters sit in glossy wet ink and no pigment has come up yet. The Wyrm's dark line: no candle to read it by */
+.tile.wet {
+  border: 1.5px solid var(--wet); color: var(--wet-on);
+  background: linear-gradient(160deg, rgba(255, 252, 240, .26) 0 16%, rgba(255, 252, 240, 0) 42%), radial-gradient(70% 45% at 72% 88%, rgba(255, 252, 240, .12), transparent 70%), var(--wet);
+  box-shadow: inset 0 -3px 5px -2px rgba(0, 0, 0, .45);
+}
+.tile.dark { border: 1.5px solid color-mix(in srgb, var(--rule) 60%, var(--night)); color: var(--night-on); background: radial-gradient(90% 70% at 50% 30%, color-mix(in srgb, var(--night-on) 10%, transparent), transparent 75%), var(--night); }
+/* the Rubricator: a line without its red letter is struck through in red, and shows nothing */
+.tile.struck { border: 1.5px solid color-mix(in srgb, var(--vermilion) 40%, var(--rule)); color: var(--ink-soft); background: var(--bg); }
+.row.struck::after { content: ""; position: absolute; left: -4px; right: -4px; top: 50%; height: 2px; margin-top: -1px; border-radius: 1px; background: var(--vermilion); transform: rotate(-1.4deg); pointer-events: none; z-index: 1; }
 /* an offering: Brother Bryan keeps the line, and it shows nothing */
 .tile.due {
   background: repeating-linear-gradient(45deg, transparent 0 4px, color-mix(in srgb, var(--gilt) 16%, transparent) 4px 5px), var(--bg-deep);
@@ -272,6 +295,22 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 .badge .droll { fill: none; stroke: var(--vermilion); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .badge .droll .f { fill: var(--vermilion); stroke: none; }
 .badge .crownb path { fill: var(--gilt-hi); stroke: var(--gilt); stroke-width: 1.2; stroke-linejoin: round; }
+.badge .scaleb { fill: none; stroke: var(--vermilion); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; } /* found wanting */
+.badge .scaleb .fill { fill: var(--vermilion); stroke: none; }
+.badge .linkb { fill: none; stroke: var(--vermilion); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; } /* the chain broken */
+.badge .wetb, .badge .wyrmb { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; } /* still wet; in the dark */
+.badge .wetb .fill, .badge .wyrmb .fill { fill: var(--ink); stroke: none; }
+.badge .rubb { fill: none; stroke: var(--vermilion); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; } /* struck by the Rubricator */
+.badge .rubb .fill { fill: var(--vermilion); stroke: none; }
+/* what the line being written must hold: red initials on its first tile's top edge, where a written line wears its badge
+   (so a gilded ghost letter is never covered). Under Mirror Script the first tile is on the right */
+.row .reqs { position: absolute; left: -2px; top: -5px; z-index: 2; display: flex; gap: 2px; pointer-events: none; }
+#board.mirror .row .reqs { left: auto; right: -2px; flex-direction: row-reverse; }
+.row .req {
+  pointer-events: auto; min-width: clamp(14px, calc(var(--tile) * .36), 21px); height: clamp(14px, calc(var(--tile) * .36), 21px); box-sizing: border-box; padding: 2px 2px 0;
+  display: grid; place-items: center; border-radius: 2px; background: var(--leaf); box-shadow: 0 0 0 1px var(--vermilion), 0 1px 3px -1px var(--shadow);
+  font: 400 clamp(11px, calc(var(--tile) * .29), 17px)/1 var(--letter); color: var(--vermilion); text-transform: uppercase;
+}
 #board.glitch { animation: glitch .6s steps(2) 2; } /* the Changeling: the ink swims */
 @keyframes glitch {
   0% { transform: translate(0); filter: none; }
@@ -358,6 +397,8 @@ header { display: flex; align-items: center; justify-content: space-between; gap
   border-color: var(--ash); color: var(--on-deep);
 }
 .key.hit { background: var(--lapis); border-color: var(--lapis); color: var(--on-deep); }
+/* the Rubricator's red letter: struck from the type case, and inked red while it is in force (over a tithe, and under Lethe Water) */
+.key.red { background: color-mix(in srgb, var(--vermilion) 13%, var(--key)) !important; border: 1.5px solid var(--vermilion) !important; color: var(--vermilion) !important; box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--vermilion) 30%, transparent) !important; }
 .key.glow { box-shadow: 0 0 0 2px var(--gilt-hi), 0 0 14px var(--gilt); } /* Vowel Lamps */
 .key:focus-visible, button:focus-visible, .card:focus-visible { outline: 2px solid var(--lapis); outline-offset: 2px; }
 
@@ -368,6 +409,7 @@ header { display: flex; align-items: center; justify-content: space-between; gap
   font: italic 400 16px/1.3 var(--text); box-shadow: 0 14px 30px -14px var(--shadow); pointer-events: none;
 }
 #toast.act { pointer-events: auto; display: flex; gap: 12px; align-items: center; text-align: left; }
+#toast .btns { flex: none; display: flex; flex-direction: column; gap: 6px; } /* two choices stack beside the reading */
 /* ---------- notes: a game word ruled in dotted gilt; hover or tap it for a note in the margin ---------- */
 .kw {
   pointer-events: auto; cursor: pointer; border-radius: 2px;
@@ -375,8 +417,8 @@ header { display: flex; align-items: center; justify-content: space-between; gap
   text-decoration-thickness: 1.5px; text-underline-offset: .2em; text-decoration-skip-ink: none;
 }
 .kw.on { text-decoration-style: solid; text-decoration-color: var(--gilt); background: color-mix(in srgb, var(--gilt-hi) 24%, transparent); }
-#hRound, #hSeals, .row .badge { cursor: pointer; }
-@media (hover: hover) and (pointer: fine) { .kw, #hRound, #hSeals, .row .badge { cursor: help; } .kw:hover { text-decoration-style: solid; text-decoration-color: var(--gilt); } }
+#hRound, #hSeals, .row .badge, .row .req { cursor: pointer; }
+@media (hover: hover) and (pointer: fine) { .kw, #hRound, #hSeals, .row .badge, .row .req { cursor: help; } .kw:hover { text-decoration-style: solid; text-decoration-color: var(--gilt); } }
 .kw:focus-visible { outline: 2px solid var(--lapis); outline-offset: 1px; }
 #tip {
   position: fixed; left: 0; top: 0; z-index: 45; box-sizing: border-box; width: max-content; max-width: min(280px, calc(100vw - 16px));
@@ -490,6 +532,7 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 .card.curse .tier { color: var(--vermilion); }
 .card.curse .cap { color: var(--vermilion); border-color: var(--vermilion); box-shadow: inset 0 0 0 2px var(--leaf), inset 0 0 0 3px color-mix(in srgb, var(--vermilion) 35%, transparent); }
 .card.curse.pick { cursor: pointer; }
+.card.curse.dear { opacity: .55; } /* Confession: a curse that costs more favours than you hold */
 .card.curse.pick:hover { border-color: var(--vermilion); }
 .card.sel { outline: 2px solid var(--gilt); outline-offset: 2px; border-color: var(--gilt); }
 .card.curse.sel { outline-color: var(--vermilion); border-color: var(--vermilion); }
@@ -499,6 +542,7 @@ header { display: flex; align-items: center; justify-content: space-between; gap
   animation: again .25s both ease-out;
 }
 .card.r-legendary .again { right: 32px; }
+.card.trade > span.swap { font-style: italic; color: var(--ink); } /* the Relic Fair: what he wants for it */
 .card.curse .again { color: var(--vermilion); }
 @keyframes again { from { opacity: 0; transform: translateY(3px); } }
 .btn {
@@ -638,7 +682,7 @@ header { display: flex; align-items: center; justify-content: space-between; gap
 }
 @media (prefers-reduced-motion: reduce) {
   .tile, .card, .panel, #banner .inner, .emblem .draw, #event.show, #board[class*="quake"], #board.glitch, #board.spin, .sighting,
-  .row.shake, .slot.fly, #hSeals.fly, .ico.new, .card .again, .shakeall, .lines p, .ad, #tip { animation: none !important; }
+  .row.shake, .slot.fly, #hSeals.fly, .ico.new, .ico.loose svg, .card .again, .shakeall, .lines p, .ad, #tip { animation: none !important; }
   .sighting, #rose, .logo .cap, .slot { transition: none !important; }
 }
 </style>
@@ -734,11 +778,22 @@ const CURSES = {
   mirror:   { name: 'Mirror Script',     tier: 'medium', max: 1, desc: () => 'Lines read right to left, as Leonardo wrote.' },
   property: { name: "Bryan's Tithe",     tier: 'medium', max: 1, desc: () => 'B, R, Y, A and N are tithed to Bryan. Write BRYAN to free them for the word.' },
   rule:     { name: "The Abbot's Rule",  tier: 'medium', max: 1, desc: () => 'Every green must stay where it was found and every gold must be written again, or the line is refused. BRYAN is always allowed.' },
+  // `rail` is said only in the curse's note on the rail, never on its card
+  brood:    { name: 'The Hellmouth',     tier: 'medium', max: 1, desc: () => 'Every Word comes from the mouth of Hell: it has three or more brothers a square apart, like LIGHT, NIGHT and MIGHT.', rail: 'Holy Water comes too late: the Word is drawn before you can pour it.' },
+  wet:      { name: 'Wet Ink',           tier: 'medium', max: 1, desc: () => 'The ink will not dry: a line shows its pigments only once you write the next. A solved line, and the line before your last, dry at once.' },
+  scales:   { name: 'The Scales of St. Michael', tier: 'mild', max: 1, desc: () => 'St. Michael weighs your lines. One that finds no letter of the Word is found wanting, and he takes a line from your page (never your last).' },
+  chain:    { name: 'The Catena',        tier: 'mild',   max: 1, desc: () => 'Your lines are bound in a chain: each must begin with the letter the line above ended on. A line that breaks it shows only its greens.' },
   liar:     { name: 'The Lying Scribe',  tier: 'nasty',  max: 1, desc: () => 'One tile in every unsolved line is painted the wrong pigment.' },
   shift:    { name: 'The Changeling',    tier: 'nasty',  max: 1, desc: () => 'After the third line on the page, the Word swaps one letter.' },
+  wisp:     { name: "Will-o'-the-Wisp",  tier: 'nasty',  max: 1, desc: () => 'For your first two lines the Word will not settle: it slips to whichever word your page has told you least about. Spend a charge or a favour to catch it.', rail: 'Foresight catches it at the start of every word, and the Vowel Lamps after your first line.' },
   blind:    { name: 'Muddied Pigments',  tier: 'nasty',  max: 1, desc: () => 'Green and gold both dry to the same lapis blue.' },
 };
 const TIER_NAME = { mild: 'Minor', medium: 'Major', nasty: 'Grave' };
+// curses never held together, either way round (under the Rule a brood is guessed one brother at a time; the Rule's kept
+// greens and the Catena's link letter would turn most lines to plain ink; the Changeling would move a Word the Wisp has
+// already moved; and the Wisp's slip is most often to the Word that finds nothing, which St. Michael would weigh twice a word)
+const APART = [['rule', 'brood'], ['rule', 'chain'], ['wisp', 'shift'], ['wisp', 'scales']];
+const apart = (id, held) => APART.some(([a, b]) => (id === a && held.includes(b)) || (id === b && held.includes(a)));
 const clockSecs = n => Math.max(15, 50 - 12 * (n - 1)) * (S && has('iron') ? 2 : 1);
 
 // ---------- boons ----------
@@ -766,11 +821,15 @@ const PERKS = {
   relic:     { name: 'Reliquary of St. Bryan', rarity: 'rare', max: 1, from: 5, beast: true, ok: () => S.faith >= 3, desc: 'Every sixth BRYAN you offer him mends a seal, if you hold fewer than two. Then it is empty until you beat a beast.' },
   shield:    { name: 'Fresh Wax',        rarity: 'rare', instant: true, beast: true, ok: () => S.round >= 5 && S.lives < 2 && S.round >= (S.waxNext || 0), desc: 'Gain a seal. A missed word breaks a seal instead of ending the book.' },
   lens:      { name: 'Reading Stone',    rarity: 'rare', max: 1, counter: ['fog', 'liar', 'blind'], desc: 'Your first line on each word sees through Censer Smoke, the Lying Scribe and Muddied Pigments.' },
-  cleanse:   { name: 'Exorcism',         rarity: 'rare', instant: true, ok: () => S.curses.some(c => CURSES[c].tier !== 'nasty') && S.round >= (S.exoNext || 0), desc: 'Cast out one of your Minor or Major curses.' },
+  cleanse:   { name: 'Exorcism',         rarity: 'rare', instant: true, ok: () => S.curses.some(c => CURSES[c].tier !== 'nasty') && S.round >= (S.exoNext || 0) && !has('charter'), desc: 'Cast out one of your Minor or Major curses.' },
+  confess:   { name: 'Confession',       rarity: 'rare', max: 1, ok: () => mentorish() && S.curses.length > 0, desc: 'Once a word, spend a favour and Brother Bryan bears one of your curses for the rest of this word. A Grave one costs two. He complains about both.' },
   phoenix:   { name: 'Phoenix Quill',    rarity: 'legendary', max: 1, ok: () => !S.quillBurned, desc: 'The first time you run out of lines, write two more. Then the quill burns.' },
   vowels:    { name: 'Vowel Lamps',      rarity: 'legendary', max: 1, desc: "After your first line on each word, the Word's vowels glow in the type case." },
   pact:      { name: 'The Red-Ink Pact', rarity: 'legendary', instant: true, beast: true, ok: () => S.round >= 5 && S.lives < 2 && S.curses.length <= 4, desc: 'Gain two seals now. Take two extra curses next folio.' },
   oracle:    { name: 'Foresight',        rarity: 'legendary', max: 1, needs: ['hint'], desc: 'Every word starts with one letter already gilded. Your Gild is melted down to pay for it, with any boon that serves it.' },
+  // signing it burns the Ordeal off your belt, and while it is held no curse of yours is cast out (no Exorcism, no Ordeal, and
+  // a beast leaves with nothing)
+  charter:   { name: "Theophilus's Charter", rarity: 'legendary', max: 1, ok: () => S.curses.length >= 2, desc: 'At the start of every word the devil strikes one letter the Word lacks for each curse you carry. None of your curses can be cast out again.' },
 };
 const RARITY = { common: '', rare: 'Rare', legendary: 'Legendary' };
 // rares from folio 3 and legendaries from folio 10 (the feast-day reward ignores this)
@@ -809,15 +868,15 @@ const descOf = id => {
 };
 const isOpen = id => !S.open || S.open.includes(id);
 const isLive = id => isOpen(id) && !(id === 'hint' && S.melted); // a Gild melted for Foresight keeps its slot, empty
-// no line of your own that shows pigments yet (an offering to Bryan is not a probe)
-const noProbe = () => !S.rows.some(r => r.by === 'player' && !r.offered);
+// no line of your own that shows pigments yet (an offering to Bryan is not a probe, nor a line the Rubricator struck through)
+const noProbe = () => !S.rows.some(r => r.by === 'player' && !r.offered && !r.struck);
 // the armarium opens at folios 3, 6 and 11, then every fifth folio
 const isArmarium = r => r === 3 || r === 6 || r === 11 || (r >= 16 && r % 5 === 1);
 // a charm you haven't found can turn up in a boon offer: one generated card per charm
 const NICHE_RARITY = { tamper: 'rare', ordeal: 'rare', gooble: 'legendary' };
 for (const id of ITEM_ORDER) if (id !== 'hint' && id !== 'chat') PERKS['rel_' + id] = {
   name: ITEMS[id].name, rarity: NICHE_RARITY[id] || 'common', instant: true, niche: id,
-  ok: () => !isOpen(id) && S.round >= ITEMS[id].from,
+  ok: () => !isOpen(id) && S.round >= ITEMS[id].from && !(id === 'ordeal' && has('charter')), // the Charter burned the Ordeal for good
   desc: ITEMS[id].desc,
 };
 // spoils: on a folio with no boon, a solved word deals two of these, one charge each from charms you have found
@@ -878,13 +937,36 @@ CURSE_GLYPH.property = G('<path d="M12 2.6c1.5 1.6 1.5 4.6 0 6.2-1.5-1.6-1.5-4.6
 CURSE_GLYPH.liar = G('<path d="M3 9.2c2-2.6 6-2.6 9-.6 3-2 7-2 9 .6.4 3.4-2 5.6-5 5.4-1.6-.1-2.4-1.8-4-1.8s-2.4 1.7-4 1.8c-3 .2-5.4-2-5-5.4z"/><path d="M6 10.6q1.6-1.4 3.4 0-1.7 1.1-3.4 0z"/><path class="fill" d="M14.6 10.6q1.7-1.6 3.6 0-1.8 1.3-3.6 0z"/><path d="M19.4 13.8l-1.8 7.6"/>');
 CURSE_GLYPH.shift = G('<path d="M4.5 12.4h15v4.4h-15z"/><path d="M4.5 12.4V8a6 6 0 0 1 6 4.4"/><circle cx="12.4" cy="10.7" r="1.7"/><path d="M3.2 19q8.8 3.4 17.6 0M7 16.8v2.6M17 16.8v2.6"/><path d="M13.8 3.4h6.8M18.7 1.5l1.9 1.9-1.9 1.9M20.6 6.8H15M16.9 4.9L15 6.8l1.9 1.9"/>');
 CURSE_GLYPH.blind = G('<path d="M6.5 2.8c1.6 2.2 2.4 3.6 2.4 4.6a2.4 2.4 0 0 1-4.8 0c0-1 .8-2.4 2.4-4.6zM17.5 2.8c1.6 2.2 2.4 3.6 2.4 4.6a2.4 2.4 0 0 1-4.8 0c0-1 .8-2.4 2.4-4.6z"/><path d="M7.6 11.4l2.6 2.4M16.4 11.4l-2.6 2.4" stroke-width="1.2"/><path class="fill" d="M12 13.4c2.2 3 3.3 4.8 3.3 6.1a3.3 3.3 0 0 1-6.6 0c0-1.3 1.1-3.1 3.3-6.1z"/>');
+CURSE_GLYPH.brood = G('<path d="M11 12.5L21 6.5C19 3.6 15.4 2.6 11.6 3 6.4 3.6 3 7.4 3 12.5s3.4 9 8.6 9.4c3.8.4 7.4-.6 9.4-3.4L11 12.5"/><path d="M19.4 7.5l-.1 1.9-1.4-1-.1 1.9-1.4-1-.1 1.8-1.3-.8M19.4 17.5l-.1-1.9-1.4 1-.1-1.9-1.4 1-.1-1.8-1.3.8" stroke-width="1.1"/><path d="M7.6 4.3L5.4 1.5l.4 4.1" stroke-width="1.1"/><path d="M8 7.6h.01" stroke-width="2.2"/><path class="fill" d="M14.2 11c.8.9 1 1.6.4 2.2-.6.5-1.5.2-1.5-.6 0-.6.6-1 1.1-1.6z"/>');
+// St. Michael's balance: the pan found wanting rides high (the badge on a weighed line wears it too)
+const SCALES_P = '<path d="M12 6.6V20M8.5 20.5h7M4.5 5.6l15 2"/><circle cx="12" cy="3.7" r="1"/><path d="M4.5 5.6L2.4 10.4M4.5 5.6l2.1 4.8M19.5 7.6l-2.1 4.8M19.5 7.6l2.1 4.8"/><path d="M1.9 10.4h5.2c0 1.5-1.2 2.5-2.6 2.5s-2.6-1-2.6-2.5z"/><path class="fill" d="M16.9 12.4h5.2c0 1.5-1.2 2.5-2.6 2.5s-2.6-1-2.6-2.5z"/>';
+CURSE_GLYPH.scales = G(SCALES_P);
+// the Catena: three links, the middle one seen edge on
+CURSE_GLYPH.chain = G('<rect x="2" y="14.5" width="9.6" height="5.4" rx="2.7" transform="rotate(-45 6.8 17.2)"/><rect x="7.4" y="10.9" width="9.2" height="2.2" rx="1.1" transform="rotate(-45 12 12)"/><rect x="12.4" y="4.1" width="9.6" height="5.4" rx="2.7" transform="rotate(-45 17.2 6.8)"/>');
+// Wet Ink: a drop of ink with the shine still on it, over a ruled line (the badge on a wet line wears it too)
+const WET_P = '<path d="M12 2.6c3.5 4.4 5.6 7.6 5.6 10.6a5.6 5.6 0 0 1-11.2 0c0-3 2.1-6.2 5.6-10.6z"/><path d="M9.2 13.6a3 3 0 0 0 2.2 2.7" stroke-width="1.1"/><path d="M3.5 21.2h17" stroke-width="1.1"/>';
+CURSE_GLYPH.wet = G(WET_P);
+// the Will-o'-the-Wisp: a marsh light that has slipped from where it was (dotted) to where it is now, over the reeds
+CURSE_GLYPH.wisp = G('<path d="M16 2.4c.2 2.4 1.9 3.4 3 5.2 1 1.6.9 3.6-.3 4.9a3.9 3.9 0 0 1-5.9-.3c-1-1.3-.9-3.2.2-4.6.3 1 .9 1.6 1.7 1.8-.5-2.4.1-5 1.3-7z"/><path class="fill" d="M16.2 9.2c.9.9 1.3 1.7 1.3 2.3a1.3 1.3 0 0 1-2.6 0c0-.6.4-1.4 1.3-2.3z"/><path d="M6 8.4c1.6 1.8 2.4 3.2 2.4 4.3a2.4 2.4 0 0 1-4.8 0c0-1.1.8-2.5 2.4-4.3z" stroke-dasharray="1.2 1.5" stroke-width="1"/><path d="M8.6 10.6q1.4-2.2 3.2-2.4" stroke-dasharray="0 2" stroke-width="1.6"/><path d="M2.5 20.2q4.75-1.6 9.5 0t9.5 0"/><path d="M5.2 19.6v-2.9M7.2 19.1v-1.9M17.4 19.6v-3.1M19.3 19.4v-1.8" stroke-width="1.1"/>');
 CURSE_GLYPH.rule = G('<path d="M10.5 21.5V9.8"/><path d="M10.5 9.8c0-3.8 1.8-6.3 4.8-6.3 2.2 0 3.7 1.5 3.7 3.4 0 1.7-1.3 2.9-2.9 2.9-1.3 0-2.2-.8-2.2-1.9 0-.9.7-1.6 1.6-1.6"/><path d="M8 21.5h5"/><path d="M3.5 12.5h4M3.5 15.5h4M3.5 18.5h4" stroke-width="1.1"/>');
 BEAST_GLYPH.king = G('<path d="M5 16l-1.6-8 4.8 3.6L12 5.2l3.8 6.4L20.6 8 19 16z"/><path d="M5 16h14v3.4H5z"/><circle class="fill" cx="3.3" cy="6.9" r="1.1"/><circle class="fill" cx="12" cy="4" r="1.1"/><circle class="fill" cx="20.7" cy="6.9" r="1.1"/><path d="M12 17.7h.01" stroke-width="2"/>');
 BEAST_GLYPH.wifi = G('<path d="M2.8 9.2a13 13 0 0 1 18.4 0M5.6 12.4a8.6 8.6 0 0 1 12.8 0M8.6 15.4a4.6 4.6 0 0 1 6.8 0"/><circle class="fill" cx="12" cy="18.8" r="1.7"/><path d="M4 3.5l16 17"/>');
 BOON_GLYPH.relic = G('<path d="M4 11L12 5.5 20 11v9.5H4z"/><path d="M4 11h16M4 17.6h16" stroke-width="1"/><path d="M12 12.4v4M10.2 14h3.6" stroke-width="1.3"/><path d="M12 5.5V2.6M10.8 3.6h2.4" stroke-width="1.1"/>');
 BOON_GLYPH.licence = G('<path d="M19.5 3.5C14 5 10.4 9.4 9 14.6l1.6.6c2.4-4.4 5.6-7.8 8.9-11.7z"/><path d="M9.6 15l-1.4 3.4"/><circle cx="7" cy="8" r="3.4"/><path d="M5.4 11l-1 4 2.6-1.4 2.6 1.4-1-4"/>');
 BOON_GLYPH.abc = G('<path d="M3 17L5.5 8 8 17M4 13.6h3"/><path d="M10 8v9h2.6a2.2 2.2 0 0 0 0-4.5H10h2.2a2 2 0 0 0 0-4.5z"/><path d="M21 9.4a3.6 4.6 0 1 0 0 6.2"/><path d="M2.5 20h19" stroke-dasharray="1.4 1.6" stroke-width="1"/>');
+// Theophilus's Charter: a deed, its foot folded up, and the devil's horned seal hanging from its tag
+BOON_GLYPH.charter = G('<path d="M4.5 2.5h15v9.5h-15z"/><path d="M4.5 9.8h15" stroke-width="1"/><path d="M7 4.9h10M7 7.3h7.4" stroke-width="1"/><path d="M12 12v4.2"/><circle class="fill" cx="12" cy="18.7" r="2.6"/><path d="M10.4 16.7C9.2 16.1 8.7 14.8 9.1 13.3M13.6 16.7c1.2-.6 1.7-1.9 1.3-3.4" stroke-width="1.3"/>');
+// Confession: the grille of the confessional, under its cross
+BOON_GLYPH.confess = G('<path d="M5.5 21.5v-11a6.5 6.5 0 0 1 13 0v11z"/><path d="M9.8 4.4v17.1M14.2 4.4v17.1M5.5 11.6h13M5.5 16.2h13" stroke-width="1"/><path d="M12 .8v2.4M10.9 1.8h2.2" stroke-width="1.1"/><path d="M3.5 21.5h17"/>');
+// the Wyrm in the Binding winds through a book's spine (on the rail on its folio, and on the line it darkens)
+const WYRM_P = '<path d="M9.6 3.2h4.6v17.6H9.6z"/><path d="M9.6 6.4h4.6M9.6 17.6h4.6" stroke-width="1"/><path d="M2.6 18.6c2.8-3.2 5.6-2.4 8.6-5.2s3.2-5.4 6.2-6.2"/><circle cx="19" cy="6.9" r="1.8"/><path d="M20.4 5.7l2.6-1.2M20.6 8.1l2.4 1.1" stroke-width="1.1"/><circle class="fill" cx="18.7" cy="6.5" r=".55"/>';
+BEAST_GLYPH[20] = G(WYRM_P);
+// the Rubricator: a rubricated initial, the quill that painted it and a drop of its red (on the rail on its folio, and on a struck line)
+const RUBRIC_P = '<path d="M2.8 3.6h9.4V13H2.8z" stroke-width="1.1"/><path d="M5.6 10.9V5.7h2.1a1.45 1.45 0 0 1 0 2.9H5.6M7.5 8.6l2.1 2.3" stroke-width="1.3"/><path d="M21.2 2.6C16.8 4 14 7.4 13 12.2l1.4.5C16.8 9 19 6.2 21.2 2.6z"/><path d="M13.7 12.5l-1 3.2"/><path class="fill" d="M12.5 17c-1.1 1.5-1.3 2.6 0 3.2 1.3-.6 1.1-1.7 0-3.2z"/><path d="M2.8 17.4h7.4M2.8 20.6h7.4" stroke-width="1.1"/>';
+BEAST_GLYPH[15] = G(RUBRIC_P);
 BEAST_GLYPH.feast = G('<ellipse cx="9.5" cy="4" rx="4" ry="1.5"/><circle cx="9.5" cy="10.4" r="3.1"/><path d="M3 21.4c.3-3.4 2.8-5.6 6.5-5.6 2.2 0 3.9.8 5 2"/><path d="M16 8.4h5c0 2.4-1.1 3.8-2.5 3.8S16 10.8 16 8.4zM18.5 12.2v4.6M16.8 16.8h3.4"/>');
+// the Relic Fair: the Relic Seller's stall, a relic on the counter and a swap written on its front
+BEAST_GLYPH.fair = G('<path d="M3 9l2-5h14l2 5z"/><path d="M3 9a2.25 2.25 0 0 0 4.5 0a2.25 2.25 0 0 0 4.5 0a2.25 2.25 0 0 0 4.5 0a2.25 2.25 0 0 0 4.5 0"/><path d="M9.6 4L8.6 9M14.4 4l1 5" stroke-width="1"/><path d="M5 11.2v3.3M19 11.2v3.3M4 14.5h16V21H4z"/><path d="M8.2 16.6h7.4M14.4 15.5l1.2 1.1-1.2 1.1M15.8 19H8.4M9.6 17.9L8.4 19l1.2 1.1" stroke-width="1"/><path d="M12 11.6v2.9M10.9 12.6h2.2" stroke-width="1"/>');
 // Brother Bryan's slot on the belt wears his figure; while the King holds him, the crown
 GLYPH.chat = BOON_GLYPH.returns; GLYPH.held = BEAST_GLYPH.king;
 // boons that give you something to press sit in the belt after your charms, and renew every word
@@ -904,6 +986,11 @@ const MONK = (eyes = '<path class="feat" d="M20.2 24.2h2.4M25.4 24.2h2.4M22 30.4
 const BRYAN_SVG = `<svg class="monk" viewBox="0 0 48 52" aria-label="Brother Bryan">${MONK()}</svg>`;
 const DROLL_SVG = '<svg class="droll" viewBox="0 0 24 24" aria-label="A drollery"><path d="M6 9.5C3.6 7.8 3.4 4.4 5.2 2.6c.2 2.6 1.8 3.8 3.8 4.2M18 9.5c2.4-1.7 2.6-5.1.8-6.9-.2 2.6-1.8 3.8-3.8 4.2"/><path d="M5.6 9.4q6.4-5 12.8 0 1 6.6-2.8 9.8-3.6 2.8-7.2 0-3.8-3.2-2.8-9.8z"/><circle class="f" cx="12" cy="12.4" r="1.6"/><path d="M8.6 16.4l1.13 1.1 1.13-1.1 1.13 1.1 1.13-1.1 1.13 1.1 1.13-1.1"/></svg>';
 const CROWN_SVG = '<svg class="crownb" viewBox="0 0 24 24" aria-label="The Drollery King"><path d="M3 18h18l-1.5-10-4.5 4-3-6-3 6-4.5-4z"/></svg>';
+const SCALES_SVG = `<svg class="scaleb" viewBox="0 0 24 24" aria-label="St. Michael's scales">${SCALES_P}</svg>`;
+const WET_SVG = `<svg class="wetb" viewBox="0 0 24 24" aria-label="Wet ink">${WET_P}</svg>`;
+const WYRM_SVG = `<svg class="wyrmb" viewBox="0 0 24 24" aria-label="The Wyrm in the Binding">${WYRM_P}</svg>`;
+const RUBRIC_SVG = `<svg class="rubb" viewBox="0 0 24 24" aria-label="The Rubricator">${RUBRIC_P}</svg>`;
+const LINK_SVG = '<svg class="linkb" viewBox="0 0 24 24" aria-label="A broken link"><path d="M9.4 12.2L5.6 16a3.1 3.1 0 0 0 4.4 4.4l3.8-3.8"/><path d="M14.6 11.8L18.4 8A3.1 3.1 0 0 0 14 3.6l-3.8 3.8"/><path d="M5.4 8.6l2.2.6M18.6 15.4l-2.2-.6"/></svg>';
 const DIE = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="12" height="12" rx="1"/><circle cx="5.5" cy="5.5" r=".9" fill="currentColor"/><circle cx="10.5" cy="10.5" r=".9" fill="currentColor"/><circle cx="8" cy="8" r=".9" fill="currentColor"/></svg>';
 const SCRAPE = '<svg viewBox="0 0 24 16" aria-hidden="true"><path d="M8 2.5h12.5v11H8L2.5 8z"/><path d="M11.5 5.5l5 5M16.5 5.5l-5 5"/></svg>';
 const HEAD_BIG = '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="17" r="10"/><path d="M20 16h.01M28 16h.01" stroke-width="3"/><path d="M20.5 21.5h7"/><path d="M15 26l-3 9h24l-3-9"/><path d="M8 42h32M11 35v7M37 35v7"/><path d="M24 3v3M14 6l2 3M34 6l-2 3"/></svg>';
@@ -931,22 +1018,24 @@ const freshWord = () => ({
   appeased: false, botOn: false, shifted: false, mull: false, dowse: false, dowsing: false,
   dowsed: {}, lens: false, queue: [], kingDone: false, dinoTaps: 0,
   favoured: false, owed: false, holy: false, ordeal: false, ordealBy: 0, aiming: false, sketching: false, sketches: [], spilled: false,
-  debt: 0, sold: false, abcPaid: false, freeRows: 0, penned: 0, swings: [], scraped: [], refundAt: -1,
+  debt: 0, sold: false, abcPaid: false, freeRows: 0, penned: 0, swings: [], scraped: [], refundAt: -1, weighed: 0, pinned: false, red: '', confessed: '',
 });
 const fresh = () => ({
   phase: 'play', round: 1, lives: 1, curses: [], bossCurses: [], perks: {},
   items: { hint: 1, chat: 1, row: 0, dict: 0, source: 0, bot: 0, tamper: 0, gooble: 0, holy: 0, ordeal: 0 }, open: ['hint', 'chat'],
   rerolls: 0, faith: 0, history: [], extraCurses: 0,
   bryanState: 'mentor', bryanRoundAt: 6 + Math.floor(Math.random() * 4), believer: false,
-  prayers: 0, paidAt: 0, debt: 0, box: 0, ordealDue: 0, ordealSeal: false, returnedAt: 0, graceUsed: false, relicN: 0, relicDry: false, melted: false, v: 14,
+  prayers: 0, paidAt: 0, debt: 0, box: 0, ordealDue: 0, ordealSeal: false, returnedAt: 0, graceUsed: false, relicN: 0, relicDry: false, melted: false, chainWarned: false, fairAt: 0, v: 14,
   len: 5, answer: '', rows: [], cur: '', revealed: {}, layout: null, timeLeft: 0, extraRows: 0, w: freshWord(),
 });
 const has = id => S.perks[id] || 0;
 const rawCount = id => S.curses.filter(c => c === id).length + S.bossCurses.filter(c => c === id).length;
+const beastN = id => S.bossCurses.filter(c => c === id).length; // a beast's copies, for its folio
 const count = id => {
   if (has('steady') && (id === 'fat' || id === 'quake')) return 0;
-  if (S.w.bryan && (id === 'property' || id === 'shift')) return 0; // suspended for the Feast of St. Bryan
-  if (S.w && S.w.holy) return S.bossCurses.filter(c => c === id).length; // Holy Water: your curses sleep, a beast's do not
+  if (S.w && S.w.bryan && (id === 'property' || id === 'shift' || id === 'brood' || id === 'wisp')) return 0; // suspended for the Feast of St. Bryan
+  if (S.w && S.w.holy) return beastN(id); // Holy Water: your curses sleep, a beast's do not
+  if (S.w && S.w.confessed === id) return Math.max(beastN(id), rawCount(id) - 1); // Confession: Brother Bryan bears one copy of yours
   return rawCount(id);
 };
 const actOf = r => r <= 4 ? 1 : r <= 9 ? 2 : 3;
@@ -955,6 +1044,97 @@ const beastPage = r => r === 5 ? "the Drollery King's page" : r === 10 ? "the Ae
 const bossName = r => r === 15 ? 'The Rubricator' : r === 20 ? 'The Wyrm in the Binding' : 'The Colophon';
 const bossEmblem = r => r === 15 ? 'rubricator' : r === 20 ? 'wyrm' : 'colophon';
 const poolFor = L => (POOLS[actOf(S.round)] || {})[L] || ANSWERS[L];
+// the Hellmouth's broods: the words of a pool with three or more brothers that differ in the same one square (?IGHT).
+// Counted once per pool (each Book draws from its own)
+const BROODS = new Map();
+function broodOf(pool) {
+  if (!BROODS.has(pool)) {
+    const words = [...new Set(pool)], n = {}, mask = (w, i) => w.slice(0, i) + '?' + w.slice(i + 1);
+    for (const w of words) for (let i = 0; i < w.length; i++) n[mask(w, i)] = (n[mask(w, i)] || 0) + 1;
+    BROODS.set(pool, new Set(words.filter(w => [...w].some((_, i) => n[mask(w, i)] >= 4))));
+  }
+  return BROODS.get(pool);
+}
+// a Word drawn from `from` (the unused words of the pool): out of a brood while the Hellmouth is open
+const hellDraw = from => { const b = count('brood') ? from.filter(w => broodOf(poolFor(S.len)).has(w)) : []; return pick(b.length ? b : from); };
+// the Catena: the letter the line being written must begin with, the last letter of the newest line on the page. None for
+// the first line of a word, after a burned line, or after an X (too few words begin with it)
+const chainLink = () => {
+  const last = count('chain') && S.rows[S.rows.length - 1], ch = last && last.by !== 'timer' ? last.letters[S.len - 1] : '';
+  return /^[a-wyz]$/.test(ch || '') ? ch : '';
+};
+// what the line being written must hold, each a red initial on its first tile's top edge: { ch, kw, label, say }, or nothing
+// (label is the initial's spoken name; say, read after a line is revealed, names the next one's need). The Catena's link
+// letter is one; a curse or a beast with a letter to demand adds its own here
+const ROW_REQS = [() => { const ch = chainLink(), C = ch.toUpperCase(); return ch && { ch, kw: 'c:chain', label: `The Catena: begin this line with ${C}`, say: `The Catena: begin your next line with ${C}.` }; }];
+const rowReqs = () => ROW_REQS.map(f => f()).filter(Boolean);
+// a line whose pigments have not come up: wet (Wet Ink), or dark (the first line on the Wyrm's page). It shows its letters
+// and nothing else, and the type case, the Rule and the page's count learn nothing from it until it dries
+const inkWet = r => !!(r && (r.wet || r.dark));
+// the Will-o'-the-Wisp: until it is caught, the Word slips before each of your first two probe lines (lines of your own
+// hand that are not BRYAN, a scraped one included) is judged
+const wispProbes = () => S.rows.concat(S.w.scraped || []).filter(r => r.by === 'player' && !r.bryan).length;
+const wispLoose = () => !!(S && S.w && S.phase === 'play' && count('wisp') && !S.w.pinned && wispProbes() < 2);
+// it slips to a random word of the largest bucket the line would leave: the words that still fit (candidates() honours
+// every line, sketch, swing, struck letter and gilded square, so the page never lies), never one written or used this
+// book. Under the Hellmouth it keeps to the broods. With nowhere to go, it stays
+function wispSlip(word) {
+  const done = new Set(S.rows.concat(S.w.scraped || []).map(r => r.letters.join('')).concat(word, S.history));
+  let fit = candidates().filter(c => !done.has(c));
+  const hell = count('brood') ? fit.filter(c => broodOf(poolFor(S.len)).has(c)) : [];
+  if (hell.length) fit = hell;
+  if (!fit.length) return;
+  const by = new Map();
+  for (const c of fit) { const k = code(word, c); if (!by.has(k)) by.set(k, []); by.get(k).push(c); }
+  const top = Math.max(...[...by.values()].map(v => v.length));
+  S.answer = pick([...by.values()].filter(v => v.length === top).flat());
+}
+// caught: the Word settles for the rest of the word. A charge or a favour spent, Bryan's own line, Foresight and the Vowel
+// Lamps catch it, always before they read the Word. Its word rides on the toast that says what was spent (or one shown
+// just before it), or comes alone
+function pinWisp() {
+  if (!S || !S.w || S.w.pinned) return;
+  const loose = wispLoose(), before = toastFresh && lastToast;
+  S.w.pinned = true;
+  if (!loose) return;
+  caught = "The will-o'-the-wisp is caught."; renderRails();
+  queueMicrotask(() => { if (caught) before ? toast(...before) : toast(''); });
+}
+// a beast's rule, said on its leaf and in its note on the rail
+const BEAST_RULE = {
+  15: 'The Rubricator names a red letter for each line, one the Word lacks. A line of yours without it is struck through and shows nothing, unless it is the Word.',
+  20: 'The Wyrm has eaten the candles: the first line on the page shows nothing until the second is judged.',
+};
+// the Rubricator's rule (folio 15): at the start of the word and after each line it names a red letter the Word lacks, never
+// J, Q, X or Z (too few words carry them), usually one the page has not ruled out (not always, so one already ruled out tells nothing). It is struck from the type case, its key
+// is inked red, and the line being written wears it as an initial. It relents (names none) when no word the Abbot's Rule
+// allows could carry one, so a page under the Rule is never left with only lines it would strike
+// (a word saved before the Rubricator kept his rule still has the Grave curse he laid instead)
+const rubricOn = () => !!(S && S.w && S.phase === 'play' && S.round === 15 && !S.w.oldBeast);
+// the letters some word the Abbot's Rule allows could carry (null while no Rule binds)
+function ruleCarry() {
+  const need = ruleNeeds(), carry = need && new Set();
+  if (need) for (const w of VALID[S.len]) if (Object.entries(need.keep).every(([i, ch]) => w[i] === ch) && [...need.use].every(ch => w.includes(ch))) for (const ch of w) carry.add(ch);
+  return carry;
+}
+function nameRed() {
+  if (!rubricOn()) return '';
+  const ks = keyStates(), dz = S.w.dowsed, carry = ruleCarry();
+  const none = [...'abcdefghiklmnoprstuvwy'].filter(c => !S.answer.includes(c) && (!carry || carry.has(c))), open = none.filter(c => !ks[c] && !dz[c]);
+  S.w.red = pick(open.length && Math.random() < .75 ? open : none.filter(c => c !== S.w.red)) || (none.includes(S.w.red) ? S.w.red : '');
+  if (S.w.red) dz[S.w.red] = 'absent';
+  return S.w.red;
+}
+// mid-line (a Gild, a curse put to sleep) the Rule can bind tighter: when no word it allows could carry the red letter in force,
+// the Rubricator names another for the line being written, or relents. Returns what he says, or ''
+function redHolds() {
+  const carry = rubricOn() && S.w.red && ruleCarry();
+  if (!carry || carry.has(S.w.red)) return '';
+  const ch = nameRed(), say = ch ? `The Rubricator names ${ch.toUpperCase()} instead.` : 'The Rubricator relents for this line.';
+  paintRow(S.rows.length, false); renderKb(); $('sr').textContent += ' ' + say;
+  return say;
+}
+ROW_REQS.push(() => { const ch = rubricOn() && S.w.red, C = (ch || '').toUpperCase(); return ch && { ch, kw: 'b:15', label: `The Rubricator: this line must hold ${C}`, say: `The Rubricator names ${C} for your next line.` }; });
 const mentorish = () => S.bryanState === 'mentor' || S.bryanState === 'returned';
 // the Abecedary and the Penknife add at most one extra line to a word (two with Wide Margins);
 // free lines (the Grace Line, the Palimpsest, the Alms Box, the Phoenix Quill) sit outside that cap
@@ -967,7 +1147,10 @@ const basePage = () => 6 - count('fuse') - squeezeAt(S.round);
 // lines used on this page (a scraped line still counts) and the lines still to spare
 const usedLines = () => S.rows.length + (S.w && S.w.mull ? 1 : 0);
 const spare = () => Math.max(0, maxGuesses() - usedLines());
-const maxGuesses = () => Math.max(3, basePage() - ((S.w && S.w.debt) || 0)) + Math.min(bonusCap(), bonusLines()) - mullLine() + ((S.w && S.w.freeRows) || 0);
+// the lines still to write on the board (a scraped line freed its own, so this is spare() and one more after a scrape)
+const linesLeft = () => maxGuesses() - S.rows.length;
+// a line St. Michael takes comes off outside the floor of three: he only weighs while two lines are left to spare
+const maxGuesses = () => Math.max(3, basePage() - ((S.w && S.w.debt) || 0)) + Math.min(bonusCap(), bonusLines()) - mullLine() + ((S.w && S.w.freeRows) || 0) - ((S.w && S.w.weighed) || 0);
 const offline = id => bossOf(S.round) === 'wifi' && S.phase === 'play' && !!ITEMS[id].net;
 const ownRows = () => S.rows.filter(r => r.by === 'player').length;
 const clue = () => S.answer === 'bryan' ? BRYAN_CLUE : (CLUES[S.answer] || {});
@@ -991,12 +1174,12 @@ function keyStates() {
   // a grey on a letter the line holds twice only says there are no more of it. If another copy of it in the same line is
   // hidden (smoke), that copy may be the Word's, so the grey proves nothing and the key is left as it was
   const greyOk = (r, ch) => r.letters.every((x, j) => x !== ch || rank[r.shown[j]]);
-  if (!count('amnesia')) for (const r of S.rows) if (!r.stale) r.letters.forEach((ch, i) => {
+  if (!count('amnesia')) for (const r of S.rows) if (!r.stale && !inkWet(r) && !r.struck) r.letters.forEach((ch, i) => { // a wet line teaches nothing yet, a struck one nothing at all
     const st = r.shown[i];
     if (!rank[st] || (st === 'absent' && !greyOk(r, ch))) return;
     if (!ks[ch] || rank[st] > rank[ks[ch]]) ks[ch] = st;
   });
-  if (!count('amnesia')) for (const r of S.w.scraped || []) if (!r.lied) r.letters.forEach((ch, i) => {
+  if (!count('amnesia')) for (const r of S.w.scraped || []) if (!r.lied && !r.struck) r.letters.forEach((ch, i) => {
     const st = r.shown[i] === 'correct' ? 'present' : r.shown[i]; // the type case keeps a scraped green as gold: never a place
     if (st === 'absent' && !greyOk(r, ch)) return;
     if (rank[st] && (!ks[ch] || rank[st] > rank[ks[ch]])) ks[ch] = st;
@@ -1007,8 +1190,8 @@ function keyStates() {
   return ks;
 }
 function renderKb() {
-  const ks = keyStates(), rows = layoutRows();
-  $('kb').innerHTML = rows.map((r, i) => `<div class="kr">${i === 2 ? `<button class="key wide" type="button" data-k="enter">${S && S.w && S.w.sketching ? 'Sketch' : 'Inscribe'}</button>` : ''}${[...r].map(ch => `<button class="key ${ks[ch] || ''}${has('vowels') && !noProbe() && 'aeiou'.includes(ch) && S.answer.includes(ch) ? ' glow' : ''}" type="button" data-k="${ch}">${ch}</button>`).join('')}${i === 2 ? `<button class="key wide" type="button" data-k="back" aria-label="Scrape out a letter">${SCRAPE}</button>` : ''}</div>`).join('');
+  const ks = keyStates(), rows = layoutRows(), red = rubricOn() && S.w.red; // the Rubricator's red letter in force
+  $('kb').innerHTML = rows.map((r, i) => `<div class="kr">${i === 2 ? `<button class="key wide" type="button" data-k="enter">${S && S.w && S.w.sketching ? 'Sketch' : 'Inscribe'}</button>` : ''}${[...r].map(ch => `<button class="key ${ks[ch] || ''}${has('vowels') && !noProbe() && 'aeiou'.includes(ch) && S.answer.includes(ch) ? ' glow' : ''}${ch === red ? ' red' : ''}" type="button" data-k="${ch}">${ch}</button>`).join('')}${i === 2 ? `<button class="key wide" type="button" data-k="back" aria-label="Scrape out a letter">${SCRAPE}</button>` : ''}</div>`).join('');
 }
 $('kb').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) { press(b.dataset.k); b.blur(); } });
 let modalClosable = false;
@@ -1076,14 +1259,18 @@ function paintRow(i, animate, stagger = STAGGER) {
   rowEl.classList.toggle('stale', !!(r && r.stale && !r.faded));
   rowEl.classList.toggle('aim', !r && i === S.rows.length && !!S.w.aiming);
   rowEl.classList.toggle('sketch', !r && i === S.rows.length && !!S.w.sketching);
-  rowEl.querySelector('.badge')?.remove();
-  const badge = r && (r.by === 'king' ? ['The Drollery King wrote this line', CROWN_SVG, 'b:king'] : r.by === 'gremlin' ? ['A drollery wrote this line', DROLL_SVG, 'drollery'] : r.by === 'bryan' ? ['Brother Bryan wrote this line, and keeps it', BRYAN_SVG, 'bryan'] : r.offered ? ['Brother Bryan keeps this line', BRYAN_SVG, 'offer'] : null);
+  rowEl.classList.toggle('struck', !!(r && r.struck)); // the Rubricator's red rule through it
+  rowEl.querySelector('.badge')?.remove(); rowEl.querySelector('.reqs')?.remove();
+  const badge = r && (r.by === 'king' ? ['The Drollery King wrote this line', CROWN_SVG, 'b:king'] : r.by === 'gremlin' ? ['A drollery wrote this line', DROLL_SVG, 'drollery'] : r.by === 'bryan' ? ['Brother Bryan wrote this line, and keeps it', BRYAN_SVG, 'bryan'] : r.offered ? ['Brother Bryan keeps this line', BRYAN_SVG, 'offer'] : r.struck ? [`The Rubricator struck this line through: it lacks the red letter ${(r.red || '').toUpperCase()}`, RUBRIC_SVG, 'b:15'] : r.dark ? ['The Wyrm has eaten the candles: this line is in the dark until your next is judged', WYRM_SVG, 'b:20'] : r.wet ? ['The ink on this line is still wet', WET_SVG, 'c:wet'] : r.wanting ? ['St. Michael found this line wanting, and took a line', SCALES_SVG, 'c:scales'] : r.plain ? ['This line broke the chain, and shows only its greens', LINK_SVG, 'c:chain'] : null);
   if (badge) rowEl.insertAdjacentHTML('afterbegin', `<span class="badge" role="img" aria-label="${esc(badge[0])}" data-kw="${badge[2]}">${badge[1]}</span>`);
+  // the line you are writing wears what it must hold (not when another hand is about to write it)
+  const reqs = !r && i === S.rows.length && S.phase === 'play' && !S.w.queue.length ? rowReqs() : [];
+  if (reqs.length) rowEl.insertAdjacentHTML('afterbegin', `<span class="reqs">${reqs.map(q => `<span class="req" role="img" aria-label="${esc(q.label)}" data-kw="${q.kw}">${esc(q.ch.toUpperCase())}</span>`).join('')}</span>`);
   for (let j = 0; j < S.len; j++) {
     const t = tiles[j];
     if (r) {
       t.textContent = r.letters[j] === ' ' ? '' : r.letters[j];
-      const st = r.shown[j] !== 'burn' && !solvedRow(r) && claimed(r.letters[j]) ? 'claimed' : r.shown[j];
+      const st = r.dark ? 'dark' : r.wet ? 'wet' : r.struck ? 'struck' : r.shown[j] !== 'burn' && !solvedRow(r) && claimed(r.letters[j]) ? 'claimed' : r.shown[j];
       const cls = `tile ${st}${r.fat === j ? ' fat' : ''}`;
       if (animate) {
         t.className = 'tile filled';
@@ -1118,23 +1305,28 @@ function renderRails() {
   const L = [], R = [], btn = (cls, kw, label, kind, icon, n) =>
     `<button class="ico ${cls}" type="button" data-kw="${kw}" data-kind="${esc(kind)}" aria-label="${esc(label + ', ' + kind)}">${icon}${n > 1 ? `<span class="n">${n}</span>` : ''}</button>`;
   if (S.phase !== 'title') {
-    const boss = bossOf(S.round), beast = k => L.push(btn(`beast${k === 'feast' ? ' feast' : ''}`, 'b:' + k, BOSS_TIPS[k][0], 'This folio only', BEAST_GLYPH[k] || DOT));
+    const boss = bossOf(S.round), beast = k => L.push(btn(`beast${k === 'feast' || k === 'fair' ? ' ' + k : ''}`, 'b:' + k, BOSS_TIPS[k][0], 'This folio only', BEAST_GLYPH[k] || DOT));
     if (S.w.bryan) beast('feast');
+    if (fairOn(S.round)) beast('fair'); // the Relic Fair sits on the rail on its folio, as the Feast does
     if (boss === 'king') beast('king');
     if (boss === 'wifi') beast('wifi');
-    const asleep = S.w.holy ? ' · asleep under Holy Water' : ' · held off for now';
+    if (boss === 'curse' && BEAST_RULE[S.round]) beast(S.round); // a beast with a rule sits on the rail with it
+    // why a curse is held off: Holy Water, Brother Bryan bearing it (one copy) since a Confession, or the folio
+    const asleep = (id, n) => S.w.holy ? ' · asleep under Holy Water' : S.w.confessed === id ? ` · Brother Bryan bears ${n > 1 ? 'one' : 'it'} for this word` : ' · held off for now';
     if (S.w.debt) L.push(btn('curse owed', 'owed', S.w.debt > 1 ? 'Owed lines' : 'An owed line', 'This word only', GLYPH.row));
     if (S.w.ordeal) L.push(btn('curse ordeal', 'ordealOn', 'The Ordeal', 'Staked on this word', GLYPH.ordeal));
+    // the Will-o'-the-Wisp flickers on the rail while it is loose on this word
+    const loose = id => id === 'wisp' && wispLoose(), flit = id => loose(id) ? ' · not caught yet' : '';
     for (const id of S.bossCurses) {
-      const held = !S.w.holy && count(id) < rawCount(id);
-      L.push(btn(`curse boss${held ? ' held' : ''}`, 'c:' + id, CURSES[id].name, `Beast's curse · this folio only${held ? asleep : ''}`, curseIcon(id)));
+      const held = count(id) < beastN(id); // a beast's copy is held only when it sleeps itself (Bryan bears only yours)
+      L.push(btn(`curse boss${held ? ' held' : ''}${loose(id) ? ' loose' : ''}`, 'c:' + id, CURSES[id].name, `Beast's curse · this folio only${held ? asleep(id) : ''}${flit(id)}`, curseIcon(id)));
     }
     const counts = {};
     S.curses.forEach(c => counts[c] = (counts[c] || 0) + 1);
     for (const id of Object.keys(counts)) {
       const held = count(id) < rawCount(id);
-      L.push(btn(`curse${held ? ' held' : ''}${arrived.includes(id) ? ' new' : ''}`, 'c:' + id, CURSES[id].name,
-        `${TIER_NAME[CURSES[id].tier]} curse${counts[id] > 1 ? ' · ×' + counts[id] : ''}${held ? asleep : ''}`, curseIcon(id), counts[id]));
+      L.push(btn(`curse${held ? ' held' : ''}${loose(id) ? ' loose' : ''}${arrived.includes(id) ? ' new' : ''}`, 'c:' + id, CURSES[id].name,
+        `${TIER_NAME[CURSES[id].tier]} curse${counts[id] > 1 ? ' · ×' + counts[id] : ''}${held ? asleep(id, counts[id]) : ''}${flit(id)}`, curseIcon(id), counts[id]));
     }
     for (const id of railBoons()) {
       const pk = PERKS[id];
@@ -1151,6 +1343,9 @@ const BOSS_TIPS = {
   king: ['The Drollery King', 'The Drollery King writes your first and third lines. This folio only.'],
   wifi: ['The Aether Is Down', 'The Aether Is Down: Brother Bryan, the Underdrawing, the Brazen Head and the Googol sleep, and while the King holds Bryan the Censer Smoke rolls in. This folio only.'],
   feast: ['The Feast of St. Bryan', 'The Feast of St. Bryan: a miss is forgiven today, and a BRYAN counts twice toward his ransom.'],
+  fair: ['The Relic Fair', 'The Relic Fair: on its folio the Relic Seller holds a stall. Solve the Word and he offers up to three trades in place of a boon, each one of your boons or charms for one of his. Or walk on.'],
+  15: [bossName(15), BEAST_RULE[15]],
+  20: [bossName(20), BEAST_RULE[20]],
 };
 // curses written at the start of a folio are read out once, and their banderoles pulse
 let arrived = [];
@@ -1173,6 +1368,8 @@ function later(fn, ms) {
   };
 }
 let toastT = null, toastAt = -1e9;
+// the Wisp's "caught", waiting for the next toast; and the toast last shown, while the code that showed it is still running
+let caught = '', lastToast = null, toastFresh = false;
 // toasts sit over the charm belt, or below an open panel so they never cover its text
 function placeToast() {
   const t = $('toast'); if (t.hidden) return;
@@ -1181,14 +1378,18 @@ function placeToast() {
   // so does a toast with ruled words, so they never catch a tap meant for a charm
   t.style.bottom = (panel ? Math.max(8, (innerHeight - panel.bottom) / 2 - t.offsetHeight / 2) : !anchor.height ? Math.round(innerHeight * .3) : t.dataset.arm || t.querySelector('.kw') ? innerHeight - anchor.top + 8 : Math.max(8, innerHeight - anchor.bottom)) + 'px';
 }
+// `btn` is a button's label (with `onBtn`), or a list of [label, onBtn] pairs (Brother Bryan's reading may offer Confess too)
 function toast(msg, ms = 1900, btn, onBtn) {
   const t = $('toast');
+  lastToast = [msg, ms, btn, onBtn]; if (!toastFresh) { toastFresh = true; queueMicrotask(() => toastFresh = false); }
+  if (caught) { msg = !msg ? caught : msg.includes(caught) ? msg : `${msg} ${caught}`; caught = ''; ms = Math.max(ms, 2600); }
   delete t.dataset.arm;
-  t.innerHTML = `<span>${esc(msg)}</span>${btn ? `<button type="button">${esc(btn)}</button>` : ''}`;
+  const bs = !btn ? [] : Array.isArray(btn) ? btn : [[btn, onBtn]], B = bs.map(([b]) => `<button type="button">${esc(b)}</button>`).join('');
+  t.innerHTML = `<span>${esc(msg)}</span>${bs.length > 1 ? `<span class="btns">${B}</span>` : B}`;
   annotate(t.firstElementChild);
   if (t.querySelector('.kw')) ms = Math.max(ms, 2600); // long enough to reach for a note
-  t.classList.toggle('act', !!btn);
-  if (btn) t.querySelector('button').onclick = () => { t.hidden = true; guard(); onBtn(); };
+  t.classList.toggle('act', !!bs.length);
+  t.querySelectorAll('button').forEach((b, i) => b.onclick = () => { t.hidden = true; guard(); bs[i][1](); });
   t.hidden = false; placeToast(); toastAt = performance.now();
   if (toastT) toastT.clear();
   toastT = later(() => t.hidden = true, ms);
@@ -1233,7 +1434,8 @@ const charmIds = () => beltIds().filter(id => ITEMS[id]);
 const keyOf = id => POWERS[id] ? PKEY[id] || '' : KEYS[charmIds().indexOf(id)] || '';
 const idOfKey = k => (PKEY && Object.keys(PKEY).find(id => PKEY[id] === k && beltIds().includes(id))) || charmIds()[KEYS.indexOf(k)];
 const powerSpent = id => id === 'mulligan' ? S.w.mull : id === 'hints' ? S.w.sold || !sellerOk(true) : S.w.dowse;
-const powerDesc = id => POWERS[id].desc + (id === 'hints' && bossOf(S.round + 1) ? ` Tomorrow is ${beastPage(S.round + 1)}.` : '');
+const powerDesc = id => POWERS[id].desc + (id === 'hints' && bossOf(S.round + 1) ? ` Tomorrow is ${beastPage(S.round + 1)}.` : '')
+  + (id === 'mulligan' && count('wet') ? ' Under Wet Ink it scrapes your newest dry line instead.' : '');
 function renderBelt() {
   $('belt').innerHTML = beltIds().map(id => {
     const k = keyOf(id), key = k ? ` (key ${k})` : '';
@@ -1273,9 +1475,11 @@ function usePower(id) {
 const powerReady = id => {
   if (id === 'hints') return !S.w.sold && sellerOk(true);
   if (id !== 'mulligan') return !S.w.dowse;
-  const last = S.rows[S.rows.length - 1];
+  const last = S.rows[knifeRow()]; // never a wet line: whether it could be scraped would tell if it holds a green
   return !S.w.mull && !!last && last.by === 'player' && !last.shown.includes('correct') && bonusLines() < bonusCap();
 };
+// the line the Penknife would scrape: your newest dry line (under Wet Ink the last is usually still wet), or -1
+const knifeRow = () => { let i = S.rows.length - 1; while (i >= 0 && inkWet(S.rows[i])) i--; return i; };
 // aiming the Gild, sketching with the Underdrawing and swinging the Pendulum each take the keys for a moment; one at a time
 function stopModes(keep) {
   let was = false;
@@ -1290,8 +1494,8 @@ function tapCharm(id) {
   if (armed === id) return disarm();
   disarm();
   if (id === 'chat' && S.bryanState === 'kidnapped') return toast(heldReading(), 4200); // he is held: a reading, nothing to use
-  const moded = (id === 'hint' && S.w.aiming) || (id === 'source' && S.w.sketching);
-  if (moded || (POWERS[id] ? !powerReady(id) || (id === 'dowse' && S.w.dowsing) : offline(id) || (!S.items[id] && id !== 'chat') || usedUp(id))) return useSlot(id); // nothing to spend (or a mode to stop): just do it
+  const moded = (id === 'hint' && S.w.aiming) || (id === 'source' && S.w.sketching), confess = id === 'chat' && confessOk();
+  if (moded || (!confess && (POWERS[id] ? !powerReady(id) || (id === 'dowse' && S.w.dowsing) : offline(id) || (!S.items[id] && id !== 'chat') || usedUp(id)))) return useSlot(id); // nothing to spend (or a mode to stop): just do it
   armed = id;
   $('belt').querySelector(`[data-item="${id}"]`)?.classList.add('armed');
   // the first few readings mention the drag, until you have dragged a charm once
@@ -1299,7 +1503,10 @@ function tapCharm(id) {
   if (tip) store.set('ww-drag-tips', tips + 1);
   const bf = bryanForm(S.len);
   const extra = id === 'chat' && !S.items.chat ? (bf ? ` No favours: he will write ${bf.toUpperCase()} on your next line first, and keep it.` : ' No favours, and BRYAN does not fit this page.') : '';
-  toast(`${nameOf(id)}: ${POWERS[id] ? powerDesc(id) : descOf(id)}${extra}${tip ? ' Or drag it up onto the page.' : ''}`, 8000, 'Use', () => { disarm(); id === 'chat' ? callBryan(true) : useSlot(id); });
+  // with Confession, Brother Bryan's reading offers Confess beside Use (alone, once he has said enough about the Word)
+  const use = () => { disarm(); id === 'chat' ? callBryan(true) : useSlot(id); }, done = confess && usedUp('chat');
+  toast(`${nameOf(id)}: ${done ? 'He has said enough about this Word. Except Bryan.' : POWERS[id] ? powerDesc(id) : descOf(id)}${extra}${tip && !done ? ' Or drag it up onto the page.' : ''}`, 8000,
+    confess ? (done ? [] : [['Use', use]]).concat([['Confess', () => { disarm(); confessPick(); }]]) : 'Use', use);
   $('toast').dataset.arm = id; placeToast();
   armT = setTimeout(disarm, 8000);
 }
@@ -1370,7 +1577,7 @@ const rnd = () => (spoilRnd || Math.random)();
 const seeded = x => () => { x = (Math.imul(x, 1664525) + 1013904223) >>> 0; return x / 4294967296; };
 // spending a charge is final: the book is saved at once, so a reload can't take it back
 const persist = () => { if (S && S.phase === 'play') store.set('ww-run', S); };
-function spendCharge(id) { S.items[id]--; renderBelt(); persist(); }
+function spendCharge(id) { pinWisp(); S.items[id]--; renderBelt(); persist(); } // a charge spent catches the Will-o'-the-Wisp
 function useItem(id) {
   if (!S || S.phase !== 'play' || busy || !ITEMS[id]) return;
   if (offline(id)) return dinoTap();
@@ -1430,8 +1637,11 @@ function code(g, a) {
 }
 const CODE = { correct: 2, present: 1, absent: 0 };
 const rowCode = r => r.truth.reduce((c, t, i) => c + CODE[t] * 3 ** i, 0);
+// a line the Rubricator struck through shows nothing, but it was not the Word (the Word is never struck)
+const struckWords = rows => new Set(rows.filter(r => r.struck).map(r => r.letters.join('')));
 function candidates(upto) {
-  const rows = S.rows.slice(0, upto ?? S.rows.length).filter(r => r.by !== 'timer' && !r.stale && !r.offered).concat(S.w.scraped || []);
+  const upTo = S.rows.slice(0, upto ?? S.rows.length), gone = struckWords(upTo.concat(S.w.scraped || []));
+  const rows = upTo.filter(r => r.by !== 'timer' && !r.stale && !r.offered && !r.struck).concat((S.w.scraped || []).filter(r => !r.struck));
   const codes = rows.map(r => [r.letters.join(''), rowCode(r)]);
   const rev = Object.entries(S.revealed), dz = Object.entries(S.w.dowsed);
   const list = poolFor(S.len).filter(c => c.length === S.len
@@ -1440,7 +1650,7 @@ function candidates(upto) {
     && dz.every(([ch, st]) => st === 'absent' ? !c.includes(ch) : c.includes(ch))
     && (S.w.swings || []).every(sw => swingFits(sw, c))
     && (S.w.sketches || []).every(k => sketchFits(k, c))
-    && !(S.w.struck || []).includes(c));
+    && !(S.w.struck || []).includes(c) && !gone.has(c));
   // the true Word always fits the true grades, even when it came from outside this book's pool
   if ((S.w.shifted || (S.w.bryan && !S.w.realBryan)) && S.answer !== 'bryan' && !list.includes(S.answer)) list.push(S.answer);
   return list;
@@ -1456,10 +1666,13 @@ function seenCandidates() {
   const pool = poolFor(S.len), rev = Object.entries(S.revealed), dz = Object.entries(S.w.dowsed);
   const fits = (c, r) => grade(r.letters, c).every((x, i) => {
     const s = claimed(r.letters[i]) ? 'claimed' : r.shown[i];
-    return s === 'correct' || s === 'present' || s === 'absent' ? x === s : s === 'hit' ? x !== 'absent' : true;
+    return s === 'correct' || s === 'present' || s === 'absent' ? x === s : s === 'hit' ? x !== 'absent' : s === 'plain' ? x !== 'correct' : true;
   });
-  let use = S.rows.filter(r => r.by !== 'timer' && !r.faded && !r.stale && !r.offered).concat(S.w.scraped || []);
-  const sk = c => (S.w.sketches || []).every(k => sketchFits(k, c)) && (S.w.swings || []).every(sw => swingFits(sw, c))
+  // a struck line teaches nothing but that it was not the Word
+  let use = S.rows.filter(r => r.by !== 'timer' && !r.faded && !r.stale && !r.offered && !inkWet(r) && !r.struck).concat((S.w.scraped || []).filter(r => !r.struck));
+  const gone = struckWords(S.rows.concat(S.w.scraped || []));
+  for (const r of S.rows) if (inkWet(r)) gone.add(r.letters.join('')); // a wet or dark line did not solve (a solving line dries at once)
+  const sk = c => !gone.has(c) && (S.w.sketches || []).every(k => sketchFits(k, c)) && (S.w.swings || []).every(sw => swingFits(sw, c))
     && dz.every(([ch, st]) => st === 'absent' ? !c.includes(ch) : c.includes(ch));
   for (;;) {
     const l = pool.filter(c => rev.every(([i, ch]) => c[i] === ch) && sk(c) && use.every(r => fits(c, r)));
@@ -1493,20 +1706,31 @@ function submit() {
     return toast('Not in the lexicon. Did you mean BRYAN?', 2800, form.toUpperCase(), () => { if (S.phase === 'play' && !busy) { S.cur = form; paintRow(S.rows.length, false); } });
   }
   const why = ruleBreak(cur);
-  if (why) { badRow(); if (count('clock') && S.w.refundAt !== S.rows.length) { S.w.refundAt = S.rows.length; S.timeLeft = Math.min(timerTotal, S.timeLeft + 3); drawTimer(); } return toast(why, 2400); }
+  const refund = () => { if (count('clock') && S.w.refundAt !== S.rows.length) { S.w.refundAt = S.rows.length; S.timeLeft = Math.min(timerTotal, S.timeLeft + 3); drawTimer(); } };
+  if (why) { badRow(); refund(); return toast(why, 2400); }
+  // the Catena warns once a book, before the first line that would break it; a second Enter writes it. It warns whether or
+  // not the line is the Word, so the warning never tells you which
+  const link = chainLink();
+  if (link && !S.chainWarned && cur !== form && cur[0] !== link) {
+    S.chainWarned = true; persist(); badRow(); refund();
+    return toast(`The Catena: begin with ${link.toUpperCase()}, or this line shows only its greens. Inscribe it again to break the chain.`, 4200);
+  }
   S.cur = '';
   commit(cur, 'player');
 }
-function shownFor(letters, truth, lens) {
+function shownFor(letters, truth, lens, plain) {
   const shown = truth.slice();
   if (!lens && !truth.every(t => t === 'correct')) {
-    if (count('liar')) {
-      const i = Math.floor(Math.random() * S.len);
+    if (count('liar')) { // never on a letter the page has struck: a lie there would be known for one, and gild the struck key
+      const dz = S.w.dowsed || {}, fair = [...Array(S.len).keys()].filter(j => dz[letters[j]] !== 'absent'), i = fair.length ? pick(fair) : Math.floor(Math.random() * S.len);
       shown[i] = pick(['correct', 'present', 'absent'].filter(s => s !== truth[i]));
     }
     const fogN = Math.min(S.len - 1, count('fog'));
     shuffle([...Array(S.len).keys()]).slice(0, fogN).forEach(i => shown[i] = 'fog');
   }
+  // a line that broke the Catena keeps only its greens (the Reading Stone does not mend a chain); a smoked square stays
+  // smoked, since plain ink says "not in place". Muddied Pigments then muddy the greens it kept
+  if (plain) shown.forEach((s, i) => { if (s === 'present' || s === 'absent') shown[i] = 'plain'; });
   if (count('blind') && !lens && !truth.every(t => t === 'correct')) for (let i = 0; i < S.len; i++) if (shown[i] === 'correct' || shown[i] === 'present') shown[i] = 'hit';
   return shown;
 }
@@ -1518,7 +1742,7 @@ function ruleNeeds() {
   if (!count('rule')) return null;
   const keep = {}, use = new Set();
   for (const r of S.rows) {
-    if (r.by !== 'player' || r.stale || r.faded || r.lied) continue;
+    if (r.by !== 'player' || r.stale || r.faded || r.lied || inkWet(r) || r.struck) continue;
     r.letters.forEach((ch, i) => {
       if (claimed(ch)) return;
       const s = r.shown[i];
@@ -1537,11 +1761,23 @@ function ruleBreak(word) {
   return '';
 }
 function commit(word, by) {
+  // the Will-o'-the-Wisp slips before a probe line of yours is judged (so everything below reads the Word it settled on);
+  // Brother Bryan's own line catches it
+  if (by === 'bryan') pinWisp();
+  else if (by === 'player' && word !== bryanForm(S.len) && wispLoose()) wispSlip(word);
   const letters = [...word], form = bryanForm(S.len), isBryan = !!form && word === form;
+  // the Catena binds lines of your own hand, judged on the letter you typed (before the Blotted Nib can slip it). BRYAN, the
+  // Word itself, and the lines of Bryan, a drollery or the King are never checked; they pass their last letter on all the same
+  const link = by === 'player' && !isBryan && word !== S.answer ? chainLink() : '', plain = !!link && word[0] !== link;
+  // the Rubricator's red letter binds lines of your own hand too, judged as typed: BRYAN, and the lines of Bryan, a drollery or
+  // the King, are never struck
+  const red = by === 'player' && !isBryan && rubricOn() ? S.w.red : '';
   let fat = -1, offered = false;
   if (by === 'player' && word !== S.answer && !isBryan && count('fat') && Math.random() < 0.35 * count('fat')) {
     fat = Math.floor(Math.random() * S.len);
-    letters[fat] = pick(neighbors(letters[fat]));
+    // it never slips the red letter in or out, so a struck line never shows it and a kept line always does
+    const ns = neighbors(letters[fat]).filter(n => !red || (word.slice(0, fat) + n + word.slice(fat + 1)).includes(red) === word.includes(red));
+    if (ns.length) letters[fat] = pick(ns); else fat = -1;
   }
   if (by === 'player') S.w.penned++;
   let tithe = false; // any BRYAN of yours or his lifts his Tithe for the word
@@ -1566,11 +1802,20 @@ function commit(word, by) {
     if (said.length) toast(said.join(' '), 2800);
   }
   const truth = grade(letters, S.answer);
-  const lens = by === 'player' && !offered && has('lens') && !S.w.lens;
-  if (by === 'player' && !offered) S.w.lens = true;
-  if (lens) toast('Reading Stone: this line shows its true pigments.');
-  const shown = offered ? Array(S.len).fill('due') : shownFor(letters, truth, lens);
-  pushRow({ letters, shown, truth, fat, by, lied: !offered && liedFor(truth, lens), bryan: isBryan, offered, ryan: by === 'player' && word === 'ryan' });
+  // a line without the red letter that does not solve is struck through and shows nothing, like an offering (struck ink
+  // over plain): it spends no Reading Stone, and lights no Vowel Lamp
+  const struck = !!red && !word.includes(red) && !truth.every(t => t === 'correct');
+  if (by === 'player' && !offered && !struck && has('vowels')) pinWisp(); // the Vowel Lamps read the Word from your first line on
+  const lens = by === 'player' && !offered && !struck && has('lens') && !S.w.lens;
+  if (by === 'player' && !offered && !struck) S.w.lens = true;
+  // Wet Ink: the line's pigments wait for the next line, unless it solves or at most one line is left after it (so the last
+  // line is never written blind). The Wyrm in the Binding: the first line on its page, whoever writes it, is dark until the
+  // second is judged (not on a word saved before the Wyrm ate the candles). An offering or a struck line shows nothing anyway
+  const unsolved = !offered && !struck && !truth.every(t => t === 'correct'), wet = unsolved && !!count('wet') && linesLeft() > 2, dark = unsolved && S.round === 20 && !S.rows.length && !S.w.oldBeast;
+  // the Stone says what this line will show: plain ink keeps only its greens, and wet or dark ink shows them later
+  if (lens) toast(`Reading Stone: this line shows its true ${plain ? 'greens' : 'pigments'}${dark ? ' once it is lit' : wet ? ' once it dries' : ''}.`);
+  const shown = offered ? Array(S.len).fill('due') : struck ? Array(S.len).fill('struck') : shownFor(letters, truth, lens, plain);
+  pushRow({ letters, shown, truth, fat, by, lied: !offered && !struck && liedFor(truth, lens), bryan: isBryan, offered, ryan: by === 'player' && word === 'ryan', plain: plain && !struck, wet, dark, struck, ...(struck && { red }) });
 }
 function pushRow(row) {
   S.rows.push(row);
@@ -1590,38 +1835,93 @@ function pushRow(row) {
   setTimeout(() => afterReveal(row), revealMs());
 }
 const solvedRow = r => r.by !== 'timer' && r.truth.every(t => t === 'correct');
-const SAY = { correct: 'in place', present: 'elsewhere', absent: 'absent', fog: 'hidden', hit: 'in the Word', claimed: 'tithed', burn: 'burned', due: "kept by Bryan" };
+const SAY = { correct: 'in place', present: 'elsewhere', absent: 'absent', fog: 'hidden', hit: 'in the Word', claimed: 'tithed', burn: 'burned', due: "kept by Bryan", plain: 'not in place', struck: 'struck through' };
+const sayLine = r => r.letters.map((ch, j) => `${ch.toUpperCase()} ${SAY[r.shown[j]] || r.shown[j]}`).join(', ') + '.';
+// Wet Ink and the Wyrm: every wet and dark line but `keep` comes up (Holy Water passes `wetOnly`, and a beast's dark line
+// stays). Returns the lines that can be read now; `.said` reads them out for the screen reader
+function dryInk(keep, wetOnly) {
+  const up = []; up.said = '';
+  S.rows.forEach((r, i) => {
+    if (r === keep || !(r.wet || (r.dark && !wetOnly))) return;
+    const lit = r.dark && !wetOnly;
+    r.wet = false; if (!wetOnly) r.dark = false;
+    if (!inkWet(r)) { up.push(r); up.said += ` Line ${i + 1} ${lit ? 'is lit' : 'dries'}: ${sayLine(r)}`; }
+  });
+  return up;
+}
+// the Abecedary, a mercy line: your first two lines that show pigments share no letter and find three of the Word's letters or
+// fewer between them, and the page grows a line (letters the Rule makes you keep, gilded ones included, don't count as shared).
+// A line in plain ink, or one the Rubricator struck through, is passed over like an offering: what it found is not yours to
+// know. The pair is judged when its second line can be read (`legible`: the lines that just came up), so under Wet Ink a line
+// later. Returns its word, or ''
+function abecedary(legible) {
+  const own = S.rows.filter(r => r.by === 'player' && !r.offered && !r.plain && !r.struck);
+  if (!has('abc') || !own[1] || !legible.includes(own[1]) || S.w.abcPaid) return '';
+  const bound = new Set(count('rule') ? Object.values(S.revealed) : []);
+  if (count('rule') && !own[0].lied) own[0].letters.forEach((ch, i) => { if (['correct', 'present', 'hit'].includes(own[0].shown[i])) bound.add(ch); });
+  const ls = own.slice(0, 2).flatMap(r => r.letters).filter(ch => !bound.has(ch)), found = new Set(own.slice(0, 2).flatMap(r => r.letters).filter(ch => S.answer.includes(ch))).size;
+  if (new Set(ls).size !== ls.length || found > 3) return '';
+  if (bonusLines() >= bonusCap()) return 'Abecedary: a lean opening, but your margins are full.';
+  S.w.abcPaid = true; buildBoard(); paintBoard();
+  return 'Abecedary: a lean opening. The page grows a line.';
+}
+// the Scales of St. Michael: a line of your own hand that finds no letter of the Word is found wanting, and he takes a
+// line from the page. Only while two lines are left to spare, so the last line is never his. He weighs only a line that shows
+// every pigment truly (not plain ink, a struck line, a lie, smoke or a tithe), and a wet or dark line only when it comes up
+// (`rows`: the lines that just became legible): his verdict would tell what the ink hid. Returns his word, or ''
+function weigh(rows) {
+  let wanting = false;
+  for (const r of rows) if (count('scales') && r.by === 'player' && !r.offered && !r.plain && !r.struck && !r.lied && !r.shown.includes('fog') && !r.letters.some(claimed)
+    && r.truth.every(t => t === 'absent') && spare() >= 2) { r.wanting = true; S.w.weighed++; wanting = true; }
+  if (!wanting) return '';
+  buildBoard(); paintBoard(); $('sr').textContent += ' Found wanting: St. Michael takes a line.';
+  return 'Found wanting: St. Michael takes a line.';
+}
+// a toast that leads with what was said just before it on the same line
+const withLead = (lead, msg) => lead ? `${lead} ${msg}` : msg;
 function afterReveal(row) {
   busy = false;
-  $('sr').textContent = `Line ${S.rows.length}: ` + row.letters.map((ch, j) => `${ch.toUpperCase()} ${SAY[row.shown[j]] || row.shown[j]}`).join(', ') + '.';
+  const struck = row.struck ? `The Rubricator strikes the line through: it lacks the red letter ${(row.red || '').toUpperCase()}.` : '';
+  $('sr').textContent = `Line ${S.rows.length}: ` + (row.dark ? row.letters.map(ch => ch.toUpperCase()).join(', ') + '. The Wyrm has eaten the candles: this line is in the dark.'
+    : row.wet ? row.letters.map(ch => ch.toUpperCase()).join(', ') + '. The ink is wet.' : struck ? row.letters.map(ch => ch.toUpperCase()).join(', ') + '. ' + struck : sayLine(row)) + (row.plain ? ' The Catena is broken: this line shows only its greens.' : '');
+  // Wet Ink and the Wyrm: now this line is judged, every line before it dries (or is lit), and its pigments bloom below
+  const up = dryInk(row), legible = inkWet(row) ? up.slice() : up.concat(row);
+  $('sr').textContent += up.said;
+  // Fading Ink counts back from the newest dry line, so a wet line never leaves the page blank
   const fadeN = count('fade');
-  if (fadeN) S.rows.forEach((r, i) => { if (i < S.rows.length - (3 - fadeN)) r.faded = true; });
+  if (fadeN) { let top = S.rows.length; while (top && inkWet(S.rows[top - 1])) top--; S.rows.forEach((r, i) => { if (i < top - (3 - fadeN)) r.faded = true; }); }
   paintBoard();
   if (count('scramble') > 1) S.layout = shuffle([...'abcdefghijklmnopqrstuvwxyz']).join('');
   renderKb(); renderHud(); renderBelt(); renderLog();
   if (solvedRow(row)) return winRound(row);
-  // the Abecedary, a mercy line: your first two lines that show pigments share no letter and find three of the Word's letters or
-  // fewer between them, and the page grows a line (letters the Rule makes you keep, gilded ones included, don't count as shared)
-  const own = S.rows.filter(r => r.by === 'player' && !r.offered);
-  if (has('abc') && row.by === 'player' && !row.offered && own.length === 2 && !S.w.abcPaid) {
-    const bound = new Set(count('rule') ? Object.values(S.revealed) : []);
-    if (count('rule') && !own[0].lied) own[0].letters.forEach((ch, i) => { if (['correct', 'present', 'hit'].includes(own[0].shown[i])) bound.add(ch); });
-    const ls = own.flatMap(r => r.letters).filter(ch => !bound.has(ch)), found = new Set(own.flatMap(r => r.letters).filter(ch => S.answer.includes(ch))).size;
-    if (new Set(ls).size === ls.length && found <= 3) {
-      if (bonusLines() < bonusCap()) { S.w.abcPaid = true; buildBoard(); paintBoard(); toast('Abecedary: a lean opening. The page grows a line.', 2400); }
-      else toast('Abecedary: a lean opening, but your margins are full.', 2400);
-    }
+  let lean = abecedary(legible);
+  const wanting = weigh(legible);
+  // the line before your last dries at once: if St. Michael's line leaves this wet one there, it comes up now
+  if (inkWet(row) && linesLeft() <= 1) {
+    const late = dryInk(); up.push(...late); $('sr').textContent += late.said; paintBoard();
+    lean = abecedary(late) || lean;
   }
-  if (S.rows.length >= maxGuesses()) return outOfRows();
-  if (row.fat >= 0) toast('The Blotted Nib slipped a letter.');
-  if ((row.by === 'gremlin' || row.by === 'king') && row.bryan) toast(row.by === 'king' ? 'The Drollery King wrote BRYAN. They are believers.' : 'The drollery wrote BRYAN. They are believers.', 2600);
+  // what this line brought (the Abecedary, the Nib, the Rubricator, St. Michael) is said once, and leads whatever is said
+  // after it on this line (a free line, the Changeling, Bryan's answer, the believers), so nothing covers it
+  const notes = [lean, row.fat >= 0 ? 'The Blotted Nib slipped a letter.' : '', struck, wanting].filter(Boolean);
+  let said = notes.join(' ');
+  if (S.rows.length >= maxGuesses()) { // a spent page: unless a free line comes, nothing more is named
+    outOfRows(said);
+    if (nameRed()) { paintRow(S.rows.length, false); renderKb(); $('sr').textContent += ' ' + rowReqs().map(q => q.say || q.label + '.').join(' '); }
+    return;
+  }
+  if (said) toast(said, notes.length > 1 ? 3400 : lean || struck || wanting ? 2400 : 1900);
+  if ((row.by === 'gremlin' || row.by === 'king') && row.bryan) toast(withLead(said, row.by === 'king' ? 'The Drollery King wrote BRYAN. They are believers.' : 'The drollery wrote BRYAN. They are believers.'), said ? 3800 : 2600);
   // the King writes the 3rd line; queue him before any wild event so nothing covers his reveal
   if (bossOf(S.round) === 'king' && S.rows.length === 2 && !S.w.kingDone) { S.w.kingDone = true; S.w.queue.push('king'); }
   const shifted = count('shift') && !S.w.shifted && S.rows.length === 3;
-  if (shifted) shapeshift();
-  if (row.by === 'bryan' && S.w.owed) answer();
+  if (shifted) said = shapeshift(said);
+  if (nameRed()) renderKb(); // the next line's red letter, named after the Changeling so the Word lacks it now
+  if (row.by === 'bryan' && S.w.owed) answer(said);
   else if (!shifted && row.by === 'player' && !S.w.queue.length && Math.random() < 0.08) wildEvent();
   paintRow(S.rows.length, false);
+  for (const r of up) paintRow(S.rows.indexOf(r), true); // the lines that came up bloom
+  if (!S.w.queue.length) for (const q of rowReqs()) $('sr').textContent += ' ' + (q.say || q.label + '.'); // what the initials say
   resetTimer();
   runQueue(); saveRun();
 }
@@ -1655,17 +1955,26 @@ function castOut(n, from = 'abcdefghijklmnopqrstuvwxyz') {
   out.forEach(c => S.w.dowsed[c] = 'absent');
   return out;
 }
-function outOfRows() {
+// Theophilus's Charter: at the start of every word (and of tomorrow's, when the Hourglass turns) the devil strikes a letter the
+// Word lacks for each curse you carry. They go where the Index's go, so the Wisp's slips and the Rubricator's red letters honour them
+function devilStrikes() {
+  if (!has('charter') || !S.curses.length) return;
+  const out = castOut(S.curses.length), list = out.map(c => c.toUpperCase());
+  if (out.length) pin("Theophilus's Charter", `the devil strikes ${pluralW(out.length, 'letter')}: ${list.join(', ').replace(/, (\w)$/, ' and $1')}`, `not ${list.join('')}`);
+}
+// `lead`: what the spent line itself said (a strike, a verdict), which leads a free line's toast so it is not lost
+function outOfRows(lead = '') {
+  $('sr').textContent += dryInk().said; // the page is spent: every line dries
   // Book I: once a book Brother Bryan grants a Grace Line; after that a miss reveals the Word and pays nothing
   if (S.round <= 4 && !S.graceUsed) {
     S.graceUsed = true; S.w.freeRows++;
     buildBoard(); paintBoard(); renderHud(); persist();
-    return toast("A Grace Line, by Brother Bryan's leave. He grants one a book.", 2800);
+    return toast(withLead(lead, "A Grace Line, by Brother Bryan's leave. He grants one a book."), lead ? 4200 : 2800);
   }
   const box = () => { // the Alms Box pays out its saved line
     S.box = 0; S.w.freeRows++;
     buildBoard(); paintBoard(); renderHud(); resetTimer(); persist();
-    toast('The Alms Box pays out: one more line.', 2400);
+    toast(withLead(lead, 'The Alms Box pays out: one more line.'), lead ? 3800 : 2400);
   };
   if (S.box && (S.round <= 4 || !S.w.bryan)) return box();
   if (S.round <= 4) return softMiss('Brother Bryan will allow it', 'A miss pays nothing.');
@@ -1674,14 +1983,18 @@ function outOfRows() {
     delete S.perks.phoenix; S.quillBurned = true;
     S.w.freeRows += 2;
     buildBoard(); paintBoard(); renderHud(); resetTimer();
-    toast('The Phoenix Quill writes two more lines, then burns.', 2600);
+    toast(withLead(lead, 'The Phoenix Quill writes two more lines, then burns.'), lead ? 4000 : 2600);
     return;
   }
   loseRound();
 }
 // one prize a solve: a boon every other folio (the even ones) and after every beast, spoils on the others; Bryan's own word always pays a boon
 const boonAt = r => r % 2 === 0 || !!bossOf(r);
-const nextBoon = () => boonAt(S.round + 1) ? '<p class="loot">Win the next word for a boon.</p>' : '';
+const nextBoon = () => boonAt(S.round + 1) && !fairOn(S.round + 1) ? '<p class="loot">Win the next word for a boon.</p>' : ''; // the fair is told by its strip
+// the Relic Fair: once in each stretch of Book III between beasts (11-14, 16-19, ...), on one of its even folios. It is drawn
+// when the beast before the stretch comes, so the leaf before it can announce it even when it is the stretch's first folio
+const fairDraw = n => { const xs = []; for (let x = n + 1; x % 5; x++) if (x % 2 === 0 && x > 10) xs.push(x); return xs.length ? xs[Math.floor(Math.random() * xs.length)] : 0; };
+const fairOn = r => !!S.fairAt && r === S.fairAt;
 function softMiss(title, line) {
   spoilRnd = seeded(S.w.seed);
   S.phase = 'lost'; S.history.push(S.answer); renderHud(); renderLog(); paintBoard();
@@ -1793,12 +2106,15 @@ function inkFx(rings = 3, flecks = 18) {
     if (++f < life) inkFx.raf = requestAnimationFrame(step); else ctx.clearRect(0, 0, W, H);
   })();
 }
-function shapeshift() {
+// `lead`: what the line just judged said, which its toast leads with. Returns the whole toast (or `lead`, if nothing swaps)
+function shapeshift(lead = '') {
   const a = S.answer, L = S.len, guessed = new Set(S.rows.map(r => r.letters.join('')));
   const oneOff = w => { if (guessed.has(w) || (S.w.struck || []).includes(w)) return false; let d = 0; for (let i = 0; i < L; i++) if (w[i] !== a[i] && ++d > 1) return false; return d === 1; };
-  let pool = ANSWERS[L].filter(oneOff);
-  if (!pool.length) pool = [...VALID[L]].filter(oneOff);
-  if (!pool.length) return;
+  // it keeps what the page was told about letters (the Charter's, the Index's and the Rubricator's struck ones) true if any word can
+  const keeps = w => Object.entries(S.w.dowsed).every(([ch, st]) => (st === 'absent') !== w.includes(ch));
+  const ans = ANSWERS[L].filter(oneOff), val = [...VALID[L]].filter(oneOff);
+  const pool = [ans.filter(keeps), val.filter(keeps), ans, val].find(l => l.length);
+  if (!pool) return lead;
   S.answer = pick(pool); S.w.shifted = true;
   S.rows.forEach(r => r.stale = true);
   for (const p in S.revealed) S.revealed[p] = S.answer[p];
@@ -1808,30 +2124,40 @@ function shapeshift() {
   const b = $('board'); b.classList.remove('glitch'); void b.offsetWidth; b.classList.add('glitch');
   setTimeout(() => b.classList.remove('glitch'), 1300);
   paintBoard(); renderKb();
-  toast('The Changeling swapped a letter of the Word. Your old lines fade.', 2800);
+  const t = withLead(lead, 'The Changeling swapped a letter of the Word. Your old lines fade.');
+  toast(t, lead ? 4200 : 2800);
+  return t;
 }
 function mulligan() {
   if (!has('mulligan') || busy || S.phase !== 'play') return;
   if (S.w.mull) return toast('The Penknife has already scraped a line on this word.');
-  const last = S.rows[S.rows.length - 1];
-  if (!last || last.by !== 'player') return toast('The Penknife only scrapes your own last line.');
+  // under Wet Ink (or in the Wyrm's dark) the last line can't be read, so it scrapes the newest dry line instead
+  const k = knifeRow(), last = S.rows[k], newest = S.rows[S.rows.length - 1], spliced = !!last && last !== newest;
+  if (!last && newest && newest.dark) return toast('The Penknife cannot find your line in the dark.');
+  if (!last && newest) return toast('The ink is still wet, and the Penknife scrapes only a dry line.', 2400);
+  if (!last || last.by !== 'player') return toast(spliced ? 'The Penknife only scrapes your own newest dry line.' : 'The Penknife only scrapes your own last line.', spliced ? 2400 : 1900);
   if (last.bryan) return toast('The Penknife will not scrape Bryan. He would be hurt.', 2600);
   if (last.shown.includes('correct')) return toast('The Penknife will not scrape a line that found a letter in place.', 2600);
   if (bonusLines() >= bonusCap()) return toast("The margins are full: a scraped line counts as one of a word's extra lines.", 2800);
-  // the type case keeps what the line showed (gold or grey, never a place)
-  S.w.scraped.push(S.rows.pop()); S.w.mull = true; S.cur = '';
+  // the type case keeps what the line showed (gold or grey, never a place). A line St. Michael found wanting is gone from
+  // his scales too, and he gives back the line he took
+  const gone = S.rows.splice(k, 1)[0], back = !!gone.wanting;
+  if (back) { delete gone.wanting; S.w.weighed = Math.max(0, (S.w.weighed || 0) - 1); }
+  S.w.scraped.push(gone); S.w.mull = true; S.cur = '';
+  if (back) buildBoard();
   paintBoard(); renderKb(); renderBelt(); renderLog(); resetTimer(); persist();
-  toast('Your last line is scraped away. The type case remembers it.');
+  // a struck line showed nothing, so there is nothing to remember
+  toast(`${gone.struck ? 'Your struck line is scraped away, red rule and all.' : `${spliced ? 'Your newest dry line' : 'Your last line'} is scraped away. The type case remembers it.`}${back ? ' St. Michael gives back the line he took.' : ''}`, back || spliced ? 2800 : 1900);
 }
 function knownGreens() {
   const known = new Set();
-  S.rows.forEach(r => { if (!r.stale && !r.offered) r.truth.forEach((t, i) => t === 'correct' && known.add(i)); });
+  S.rows.forEach(r => { if (!r.stale && !r.offered && !r.struck) r.truth.forEach((t, i) => t === 'correct' && known.add(i)); });
   return known;
 }
-// what the page has shown you in place: greens in lines you can read (not smoked, lied, faded, tithed or kept), and gilded squares
+// what the page has shown you in place: greens in lines you can read (not smoked, lied, faded, tithed, kept, wet or struck), and gilded squares
 function seenGreens() {
   const seen = new Set([...Object.keys(S.revealed).map(Number), ...(S.w.riddled || [])]);
-  S.rows.forEach(r => { if (!r.stale && !r.faded && !r.lied && !r.offered) r.shown.forEach((t, i) => t === 'correct' && !claimed(r.letters[i]) && seen.add(i)); });
+  S.rows.forEach(r => { if (!r.stale && !r.faded && !r.lied && !r.offered && !inkWet(r) && !r.struck) r.shown.forEach((t, i) => t === 'correct' && !claimed(r.letters[i]) && seen.add(i)); });
   return seen;
 }
 // the Gild is aimed: tap a square of your line (or press its number, or drop the Gild on it) and that letter is gilded
@@ -1848,25 +2174,28 @@ function startAim() {
   $('board').children[S.rows.length]?.classList.add('aim');
   toast(has('gilt') ? 'Tap a square of your line, or press its number. With Gilt Edge, press a letter to seek it.' : 'Tap a square of your line, or press its number.', 6000, 'Put back', () => { stopModes(); });
 }
+// a gilded square binds the Rule tighter, so the Rubricator may name another red letter: returns what he says, or ''
 function gildDone(i) {
   S.w.gilds++; S.w.aiming = false; still();
   spendCharge('hint');
   $('board').querySelectorAll('.row.aim').forEach(r => r.classList.remove('aim'));
   renderKb(); renderLog(); paintRow(S.rows.length, false); renderBelt();
+  return redHolds();
 }
 function gildAt(i) {
   if (!S || S.phase !== 'play' || busy || !(S.items.hint > 0) || S.w.gilds >= gildMax()) return;
   if (S.len - seenGreens().size <= minLeft()) return toast("Gild won't give away the rest of the Word.", 2400);
   if (seenGreens().has(i)) return toast('That square is already found.');
-  // a square that is green but was never shown to you is gilded all the same, and paid for
-  S.revealed[i] = S.answer[i];
-  gildDone(i);
-  toast(`Square ${sqN(i)} is gilded: ${S.answer[i].toUpperCase()}.`);
+  // a square that is green but was never shown to you is gilded all the same, and paid for (the Wisp is caught first)
+  pinWisp(); S.revealed[i] = S.answer[i];
+  const re = gildDone(i);
+  toast(`Square ${sqN(i)} is gilded: ${S.answer[i].toUpperCase()}.${re ? ' ' + re : ''}`, re ? 3000 : 1900);
 }
 // Gilt Edge: the Gild may seek a letter instead: gilded where it sits if it is in the Word, struck if not
 function seekLetter(ch) {
   if (!(S.items.hint > 0) || S.w.gilds >= gildMax()) return;
   if (S.len - seenGreens().size <= minLeft()) return toast("Gild won't give away the rest of the Word.", 2400);
+  pinWisp(); // a seek reads the Word, even one that finds the letter already found and spends nothing: the Wisp is caught
   if (!S.answer.includes(ch)) {
     S.w.dowsed[ch] = 'absent'; S.w.gilds++; S.w.aiming = false; still(); spendCharge('hint');
     $('board').querySelectorAll('.row.aim').forEach(r => r.classList.remove('aim'));
@@ -1876,8 +2205,8 @@ function seekLetter(ch) {
   const seen = seenGreens(), open = [...S.answer].map((x, i) => x === ch && !seen.has(i) ? i : -1).filter(i => i >= 0);
   if (!open.length) return toast(`${ch.toUpperCase()} is already found.`);
   const i = open[0]; S.revealed[i] = ch;
-  gildDone(i);
-  toast(`Gilt Edge: ${ch.toUpperCase()} is in the Word, gilded in square ${sqN(i)}.`, 2400);
+  const re = gildDone(i);
+  toast(`Gilt Edge: ${ch.toUpperCase()} is in the Word, gilded in square ${sqN(i)}.${re ? ' ' + re : ''}`, re ? 3400 : 2400);
 }
 // the board: while aiming, a tap on a square of your line gilds it
 $('board').addEventListener('click', e => {
@@ -1913,9 +2242,24 @@ function useHoly() {
   if (S.w.holy) return toast('Holy Water has already been sprinkled on this word.');
   if (!S.curses.length) return toast('You have no curses to put to sleep.');
   S.w.holy = true; spendCharge('holy');
+  const lean = lull();
+  toast((bossOf(S.round) && S.bossCurses.length ? "Holy Water: your curses sleep for this word. The beast's are awake." : 'Holy Water: your curses sleep for this word.') + (lean ? ' ' + lean : ''), lean ? 3400 : 2600);
+}
+// a curse put to sleep mid-word (Holy Water puts all of yours to sleep, `id` none; a Confession one copy of `id`): the page, the
+// type case and the rail are drawn again. Wet Ink sleeping dries its wet lines (a beast's Wet Ink, and the Wyrm's dark line,
+// stay); Fading Ink borne gives back the lines it no longer reaches; the candle is lit again when it changed. Lines that dry
+// are judged as any line that comes up (the Abecedary, St. Michael if he is awake), and lines the Rule reads again may make
+// the Rubricator name another red letter. Returns what they say, or ''
+function lull(id) {
   if (count('scramble') === 0 && !S.w.spilled) S.layout = null;
-  buildBoard(); paintBoard(); renderKb(); renderHud(); resetTimer();
-  toast(bossOf(S.round) && S.bossCurses.length ? "Holy Water: your curses sleep for this word. The beast's are awake." : 'Holy Water: your curses sleep for this word.', 2600);
+  const up = count('wet') ? [] : dryInk(null, true), said = [abecedary(up)];
+  if (up.length) $('sr').textContent = up.said.trim();
+  said.push(weigh(up));
+  if (id === 'fade') { const n = count('fade'); let top = S.rows.length; while (top && inkWet(S.rows[top - 1])) top--; S.rows.forEach((r, i) => { if (!n || i >= top - (3 - n)) r.faded = false; }); }
+  buildBoard(); paintBoard(); renderKb(); renderHud(); if (!id || id === 'clock') resetTimer();
+  for (const r of up) paintRow(S.rows.indexOf(r), true);
+  said.push(redHolds());
+  return said.filter(Boolean).join(' ');
 }
 // the Ordeal: staked before your first line. Solve with two lines to spare (one with Loaded Dice) and cast out any curse;
 // fail and take a Major one. The line to beat is fixed when it is staked
@@ -1998,7 +2342,7 @@ function callBryan(sure) {
   if (S.bryanState === 'kidnapped') return toast(heldReading(), 4200);
   if (S.w.rungs >= RUNGS) return toast('He has said enough about this Word. Except Bryan.', 2600);
   if (S.w.owed) return;
-  if (S.items.chat > 0) { S.items.chat--; renderBelt(); answer(); persist(); return; }
+  if (S.items.chat > 0) { pinWisp(); S.items.chat--; renderBelt(); answer(); persist(); return; } // a favour spent catches the Wisp
   // no favour left: he writes BRYAN on your next line himself (it shows nothing), then answers. He asks first
   const form = bryanForm(S.len);
   if (S.rows.length >= maxGuesses() - 1) return toast('He will not take your last line.', 2400);
@@ -2016,15 +2360,68 @@ function callBryan(sure) {
   S.w.owed = true;
   S.w.queue.push('bryan'); runQueue();
 }
-function answer() {
+// `lead`: what his own line brought up (a dried line's verdict), which his answer's toast leads with
+function answer(lead = '') {
   S.w.owed = false;
-  if (S.w.realBryan) { S.w.rungs++; pin('Brother Bryan', 'it is me', 'it is me'); renderBelt(); return toast('Brother Bryan: it is me. it is literally me.', 2600); }
+  const say = (t, ms) => toast(withLead(lead, t), lead ? ms + 1400 : ms);
+  if (S.w.realBryan) { S.w.rungs++; pin('Brother Bryan', 'it is me', 'it is me'); renderBelt(); return say('Brother Bryan: it is me. it is literally me.', 2600); }
   const n = has('chorus') && S.w.rungs === 0 ? 2 : 1;
   let r = null;
   for (let k = 0; k < n && S.w.rungs < RUNGS; k++) { S.w.rungs++; r = rung(S.w.rungs); pin('Brother Bryan', r.plain, r.chip); }
   renderBelt(); renderLog();
   if (!r) return;
-  toast(n > 1 ? 'The Chorus of the Dead joins in: two clues. See your glosses.' : `Brother Bryan${S.w.rungs === 3 ? ' sings' : ''}: ${cap1(sqFix(r.plain)).replace(/\.$/, '')}.${Math.random() < .25 ? ' ' + pick(QUIPS) : ''}`, 3200);
+  say(n > 1 ? 'The Chorus of the Dead joins in: two clues. See your glosses.' : `Brother Bryan${S.w.rungs === 3 ? ' sings' : ''}: ${cap1(sqFix(r.plain)).replace(/\.$/, '')}.${Math.random() < .25 ? ' ' + pick(QUIPS) : ''}`, 3200);
+}
+// Confession: once a word, a favour (two for a Grave curse) and Brother Bryan bears one copy of one of your curses for the rest
+// of the word. Never a beast's, and only one with something left to do on this word (a drollery's lines are written by the
+// time you can ask, a Changeling that has swapped is done, a Wisp that is not loose has settled). Reached from his reading only
+const PRICE = id => CURSES[id].tier === 'nasty' ? 2 : 1;
+// never the Will-o'-the-Wisp: any favour paid catches it, so bearing it would only cost a second
+const bearable = () => [...new Set(S.curses)].filter(id => count(id) > beastN(id) && id !== 'gremlin' && id !== 'wisp' && !(id === 'shift' && S.w.shifted));
+const confessOk = () => !!(S && S.w && S.phase === 'play' && has('confess') && !S.w.confessed && mentorish() && !offline('chat') && bearable().some(id => PRICE(id) <= (S.items.chat || 0)));
+// he complains about every one of them
+const CONFESS = {
+  fuse: 'Brother Bryan bears the Torn Leaf for this word. He holds the tear together and sighs at length.',
+  fog: 'Brother Bryan bears the Censer Smoke for this word. He coughs a great deal.',
+  clock: 'Brother Bryan bears the Guttering Candle for this word. He holds it, and complains about the wax.',
+  quake: 'Brother Bryan bears the Quaking Lectern for this word. He leans on it and says he feels seasick.',
+  scramble: 'Brother Bryan bears the Pied Type for this word. He sorts the case, muttering the alphabet.',
+  amnesia: 'Brother Bryan bears the Lethe Water for this word. He drinks it. He has forgotten why he is cross, but he is cross.',
+  fade: 'Brother Bryan bears the Fading Ink for this word. His own notes fade instead, and he blames the ink-seller.',
+  gremlin: "Brother Bryan bears the Drollery's Scrawl for this word. A drollery scribbles in his margin. He scribbles back.",
+  fat: 'Brother Bryan bears the Blotted Nib for this word. He blots everything, and blames the goose.',
+  mirror: 'Brother Bryan bears the Mirror Script for this word. He writes backwards and signs it Nayrb.',
+  property: "Brother Bryan bears Bryan's Tithe for this word. He pays it to himself, and still feels robbed.",
+  rule: "Brother Bryan bears the Abbot's Rule for this word. He keeps it, and mutters that the Abbot never did.",
+  brood: 'Brother Bryan bears the Hellmouth for this word. He notes that the Word is drawn already. He is not giving the favour back.',
+  wet: 'Brother Bryan bears the Wet Ink for this word. He blows on your lines until they dry, and complains of dizziness.',
+  scales: 'Brother Bryan bears the Scales of St. Michael for this word. He asks not to be told what he weighs.',
+  chain: 'Brother Bryan bears the Catena for this word. He wears the chain, and rattles it at you.',
+  liar: 'Brother Bryan bears the Lying Scribe for this word. The Scribe lies to him instead. He says it went well.',
+  shift: 'Brother Bryan bears the Changeling for this word. He watches the Word for you, and has not blinked since.',
+  blind: 'Brother Bryan bears the Muddied Pigments for this word. He says everything looks blue to him anyway.',
+};
+function confessPick() {
+  if (!confessOk() || busy) return;
+  stopModes();
+  const fav = S.items.chat || 0, label = id => `${TIER_NAME[CURSES[id].tier]} curse · ${PRICE(id) > 1 ? 'two favours' : 'one favour'}${PRICE(id) > fav ? ' · you have one' : ''}`;
+  modal(`
+    <div class="eyebrow">Confession</div>
+    <h2 class="bless">Which curse will he bear?</h2>
+    <p class="lede">Brother Bryan bears it for the rest of this word: one favour, or two for a Grave curse. You have ${pluralW(fav, 'favour')}.</p>
+    <div class="cards">${bearable().map((id, i) => curseCard(id, i, label(id), rawCount(id), PRICE(id) <= fav)).join('')}</div>
+    <button class="btn ghost" id="go" type="button">Confess nothing</button>`, '', true);
+  $('go').onclick = closeModal;
+  $('panel').querySelectorAll('.card.curse:not(.pick)').forEach(c => c.classList.add('dear')); // a Grave one you cannot pay for
+  $('panel').querySelectorAll('[data-x]').forEach(el => el.onclick = () => confess(el.dataset.x));
+}
+function confess(id) {
+  if (!$('modal').hidden) closeModal();
+  if (!confessOk() || !bearable().includes(id) || S.items.chat < PRICE(id)) return;
+  pinWisp(); S.items.chat -= PRICE(id); S.w.confessed = id; // paid before he bears it: a favour spent catches the Wisp, even the one he bears
+  const lean = lull(id);
+  renderBelt(); persist();
+  toast((CONFESS[id] || `Brother Bryan bears ${CURSES[id].name} for this word. He complains about it.`) + (lean ? ' ' + lean : ''), lean ? 4200 : 3400);
 }
 // does a BRYAN offered now earn anything? (a favour with room for it, or a prayer toward an unpaid ransom)
 const blessRoom = () => S.bryanState === 'kidnapped' ? S.prayers < RANSOM : (S.items.chat || 0) < capOf('chat');
@@ -2064,7 +2461,7 @@ function openIndex(part) {
     $('ic').onclick = () => { closeModal(); openIndex('c'); };
     return;
   }
-  S.w.used.dict = true;
+  S.w.used.dict = true; pinWisp();
   const out = (both || part === 'v' ? castOut(5, 'aeiou') : []).concat(both || part === 'c' ? castOut(5, 'bcdfghjklmnpqrstvwxyz') : []), list = out.map(c => c.toUpperCase());
   const said = list.length ? list.join(', ').replace(/, (\w)$/, ' and $1') : 'nothing more';
   if (out.length) pin('The Index', `not in the Word: ${list.join(', ')}`, `not ${list.join('')}`);
@@ -2168,23 +2565,26 @@ function openTamper() {
   $('go').onclick = closeModal;
   $('turn').onclick = () => {
     closeModal();
-    S.w.used.tamper = true;
+    S.w.used.tamper = true; pinWisp();
     busy = true; flash('spin', 1100);
     setTimeout(() => {
       const guessed = new Set(S.rows.map(r => r.letters.join('')));
       const pool = poolFor(S.len).filter(w => w !== S.answer && !guessed.has(w) && !S.history.includes(w));
-      S.answer = pick(pool.length ? pool : poolFor(S.len));
-      // only the last three lines are judged against tomorrow's Word; older ones fade
-      const live = S.rows.map((r, i) => r.by === 'timer' || r.offered ? -1 : i).filter(i => i >= 0).slice(-(3 + has('dice')));
+      S.answer = hellDraw(pool.length ? pool : poolFor(S.len)); // tomorrow's Word comes out of the Hellmouth too
+      // only the last three lines are judged against tomorrow's Word; older ones fade. A line in plain ink stays plain, and a
+      // struck line stays struck (it shows nothing, today or tomorrow)
+      const live = S.rows.map((r, i) => r.by === 'timer' || r.offered || r.struck ? -1 : i).filter(i => i >= 0).slice(-(3 + has('dice')));
       S.rows.forEach((r, i) => {
-        if (r.by === 'timer' || r.offered) return;
-        if (live.includes(i)) { r.truth = grade(r.letters, S.answer); r.shown = shownFor(r.letters, r.truth, false); r.lied = liedFor(r.truth, false); r.stale = false; }
+        if (r.by === 'timer' || r.offered || r.struck) return;
+        if (live.includes(i)) { r.truth = grade(r.letters, S.answer); r.shown = shownFor(r.letters, r.truth, false, r.plain); r.lied = liedFor(r.truth, false); r.stale = false; }
         else r.stale = true;
       });
       S.revealed = {}; S.w.shifted = false;
       if (has('oracle')) revealLetter();
       Object.assign(S.w, { dowsed: {}, log: [], rungs: 0, botOn: false, struck: [], riddled: [], sketches: [], swings: [], scraped: [] });
       S.w.used.dict = S.w.used.source = false;
+      devilStrikes(); // tomorrow's Word is a new word: the devil strikes again
+      nameRed(); // the Rubricator names a letter tomorrow's Word lacks (its old ones are forgotten with the rest of the type case's strikes)
       spendCharge('tamper');
       S.rows.forEach((r, i) => setTimeout(() => paintRow(i, true, 120), i * 150));
       setTimeout(() => {
@@ -2220,14 +2620,13 @@ function openGooble() {
       if (!form) return toast('Bryan does not fit. Bryan is too powerful.', 2400);
       S.cur = form; paintRow(S.rows.length, false); return toast('Bryan appreciates the click.');
     }
-    closeModal();
+    closeModal(); spend(); // spent (and the Wisp caught) before it reads the Word
     if (g === 'bones') toast(bones(), 3200);
     if (g === 'mean') { meaning(); toast('The meaning is in your glosses.', 2400); }
-    spend();
   });
   $('lucky').onclick = () => {
     if (Math.random() < (has('dice') ? 2 / 3 : 1 / 2)) {
-      closeModal(); bones(); meaning(); spend();
+      closeModal(); spend(); bones(); meaning();
       return toast('Fortune smiles: both. See your glosses.', 2800);
     }
     spend();
@@ -2252,6 +2651,11 @@ function meaning() {
 }
 
 // ---------- folio flow ----------
+// a toast from the leaf you just closed (spoils, a scraped boon, the beast leaving) leads the next one, so neither is lost
+const ledBy = () => {
+  const t = $('toast'), lead = !t.hidden && !t.dataset.arm && !t.classList.contains('act') && performance.now() - toastAt < 2200 ? (t.firstElementChild?.textContent || '').trim() : '';
+  return lead ? (/[.!?]$/.test(lead) ? lead : lead + '.') + ' ' : '';
+};
 function startRound() {
   S.phase = 'play'; spoilRnd = null;
   S.w = freshWord();
@@ -2259,27 +2663,29 @@ function startRound() {
   S.len = 5;
   if (S.w.bryan) { S.w.realBryan = Math.random() < 1 / 3; S.answer = S.w.realBryan ? 'bryan' : pick(ADJACENT); }
   else {
-    // never the same Word twice in one book
+    // never the same Word twice in one book; under the Hellmouth, out of a brood if one is left unused
     const pool = poolFor(S.len), unused = pool.filter(w => !S.history.includes(w));
-    S.answer = pick(unused.length ? unused : pool);
+    S.answer = hellDraw(unused.length ? unused : pool);
   }
   S.rows = []; S.cur = ''; S.revealed = {};
   S.extraRows = 0;
   S.w.debt = S.debt || 0; S.debt = 0; // a line borrowed yesterday comes off today's page
   S.layout = count('scramble') ? shuffle([...'abcdefghijklmnopqrstuvwxyz']).join('') : null;
-  if (has('oracle')) revealLetter();
+  if (has('oracle')) { pinWisp(); revealLetter(); } // Foresight catches the Wisp before it gilds
+  devilStrikes(); // the Charter's strikes, after Foresight's gilded letter
   if (bossOf(S.round) === 'king') S.w.queue.push('king');
   for (let g = 0; g < count('gremlin'); g++) S.w.queue.push('gremlin');
+  const red = nameRed(); // the Rubricator names the first line's red letter
   closeModal();
   buildBoard(); paintBoard(); renderKb(); renderHud(); renderBelt();
   renderLog(); resetTimer();
+  if (red && !S.w.queue.length) $('sr').textContent = rowReqs().map(q => q.say || q.label + '.').join(' ');
   for (const id of flyNext) { const el = id === 'seals' ? $('hSeals') : $('belt').querySelector(`[data-item="${id}"]`); if (el) { el.classList.remove('fly'); void el.offsetWidth; el.classList.add('fly'); } }
   flyNext = [];
-  // a toast from the leaf you just closed (spoils, a scraped boon, the beast leaving) leads the curse's read-out, so neither is lost
-  const t = $('toast'), lead = !t.hidden && !t.dataset.arm && !t.classList.contains('act') && performance.now() - toastAt < 2200 ? (t.firstElementChild?.textContent || '').trim() : '';
-  const led = lead ? (/[.!?]$/.test(lead) ? lead : lead + '.') + ' ' : '';
+  const led = ledBy();
   if (arrived.length) { announceCurses(arrived, S.ordealSeal ? ' The Ordeal takes a seal: the curses are full.' : '', led); const a = arrived; setTimeout(() => { if (arrived === a) arrived = []; }, 1300); }
   else if (S.ordealSeal) toast(led + 'The Ordeal takes a seal: the curses are full.', 2600 + (led ? 1200 : 0));
+  else if (caught) toast(led.trim(), 2600 + (led ? 1200 : 0)); // Foresight caught the Wisp: said after the leaf's word
   S.ordealSeal = false;
   runQueue(); saveRun();
 }
@@ -2291,12 +2697,14 @@ function telegraph(next) {
   if (b === 'wifi') return '<div class="strip"><b>Next: the Aether goes down.</b></div>';
   if (b === 'curse') return `<div class="strip"><b>Next: ${bossName(next)}.</b></div>`;
   if (next === S.bryanRoundAt) return '<div class="strip"><b>Next: a feast day.</b> You will see.</div>';
+  if (fairOn(next)) return '<div class="strip"><b>Next: the Relic Fair.</b></div>';
   return '';
 }
 
 function winRound(row) {
   S.phase = 'won'; busy = true;
-  paintBoard();
+  $('sr').textContent += dryInk().said; // a solve dries every line
+  paintBoard(); if (S.w.red) renderKb(); // the red letter is out of force: its key loses its ink
   const rowEl = $('board').children[S.rows.length - 1];
   rowEl.querySelectorAll('.tile').forEach((t, i) => t.style.animationDelay = i * 90 + 'ms');
   rowEl.classList.add('win');
@@ -2332,9 +2740,12 @@ function showWin() {
     } else note = 'Bryan was right (eventually).';
   } else if (S.w.bryan) note = `It was ${S.answer.toUpperCase()}. Bryan was robbed.`;
   renderHud(); renderBelt();
+  // the Relic Fair: his stall in place of the boon; with nothing of yours to swap he packs up, and the folio pays its boon
+  const deals = fairOn(S.round) ? fairDeals() : [], shut = fairOn(S.round) && !deals.length;
   // one leaf per word: the Word, what it paid, and the prize to choose (a boon, or spoils)
   const head = `${boss ? '<div class="eyebrow">The beast is beaten</div>' : ''}<h2>It is written</h2>${wordHtml(S.answer)}`
-    + `${note ? `<p class="lede">${esc(note)}</p>` : ''}${lines.length ? `<p class="loot">${lines.map(esc).join(' · ')}</p>` : ''}${telegraph(S.round + 1)}`;
+    + `${note ? `<p class="lede">${esc(note)}</p>` : ''}${lines.length ? `<p class="loot">${lines.map(esc).join(' · ')}</p>` : ''}`
+    + `${shut ? '<p class="lede">The Relic Seller wants nothing you have, and packs up his stall.</p>' : ''}${telegraph(S.round + 1)}`;
   const end = leaveBeast(advance), then = ordealPass ? () => cleansePick(end, 'The Ordeal is passed', true) : end;
   // a beast pays one boon, drawn from the rare and legendary cards; a Hair Shirt under three curses or more takes spoils as
   // well (unless a slow Bookworm sulks)
@@ -2342,6 +2753,7 @@ function showWin() {
     const slow = has('bookworm') && S.w.penned >= 5, shirt = !slow && has('shirt') && S.curses.length >= 3;
     let after = then;
     if (shirt) { const n = after; after = () => spoilsLeaf('', n, 'Hair Shirt'); }
+    if (deals.length) return fairLeaf(deals, after, head);
     return blessingPick(1, S.w.realBryan ? 'legendary' : boss ? 'boss' : null, after, head);
   }
   spoilsLeaf(head, then);
@@ -2369,7 +2781,7 @@ function spoilsLeaf(head, then, extra = '') {
 }
 function loseRound() {
   spoilRnd = seeded(S.w.seed);
-  S.phase = 'lost'; S.history.push(S.answer); paintBoard();
+  S.phase = 'lost'; S.history.push(S.answer); paintBoard(); if (S.w.red) renderKb();
   const failed = S.w.ordeal ? (S.ordealDue = (S.ordealDue || 0) + 1, '<p class="loot">The Ordeal is failed: a Major curse comes next folio.</p>') : '';
   if (S.lives > 1) {
     S.lives--; renderHud();
@@ -2385,25 +2797,27 @@ function loseRound() {
   }
   gameOver();
 }
-// mode: null (a boon after a word), 'boss' (a beast is beaten), 'legendary' (Bryan was right), 'niche' (the armarium: charms you
-// haven't found) or 'spoils' (two charges from charms you have)
+// whether a card may be dealt on a leaf of this mode, before the draw (the Relic Fair asks it too). mode: null (a boon after a
+// word), 'boss' (a beast is beaten), 'legendary' (Bryan was right), 'niche' (the armarium: charms you haven't found) or 'spoils'
+// (two charges from charms you have)
+function dealable(id, mode) {
+  const p = PERKS[id];
+  if (!p.instant && has(id) >= p.max) return false;
+  if (p.ok && !p.ok()) return false;
+  if (p.counter && !p.counter.some(c => S.curses.includes(c))) return false; // counters only for curses you keep (not a beast's)
+  if (p.needs && !p.needs.some(isLive)) return false;
+  if (p.style && !(mode === null && S.round === 2)) return false; // the styles are folio 2's alone
+  if (p.beast && mode !== 'boss') return false; // seals come only from a beaten beast
+  if (!p.spoil !== (mode !== 'spoils')) return false; // spoils cards deal only on the spoils leaf
+  if (mode !== 'legendary' && !p.niche && !p.spoil && S.round < fromOf(id)) return false;
+  return true;
+}
+const pickW = (ids, w) => { let roll = rnd() * ids.reduce((a, id) => a + w(id), 0); return ids.find(x => (roll -= w(x)) < 0) || ids[ids.length - 1]; };
+// a boon's weight in a draw: legendaries grow likelier as the book goes on, counters and boons that serve a charm more so
+const perkW = id => { const r = PERKS[id].rarity; return (r === 'legendary' ? 3 + S.round * 1.5 : r === 'rare' ? 22 + S.round : 55) * (PERKS[id].counter ? 2 : 1) * (PERKS[id].needs ? 1.5 : 1); };
 function offerPerks(mode) {
-  // counters are offered only for curses you will keep (folio-only boss curses don't count)
-  const carried = new Set(S.curses);
-  let pool = Object.keys(PERKS).filter(id => {
-    const p = PERKS[id];
-    if (!p.instant && has(id) >= p.max) return false;
-    if (p.ok && !p.ok()) return false;
-    if (p.counter && !p.counter.some(c => carried.has(c))) return false;
-    if (p.needs && !p.needs.some(isLive)) return false;
-    if (p.style && !(mode === null && S.round === 2)) return false; // the styles are folio 2's alone
-    if (p.beast && mode !== 'boss') return false; // seals come only from a beaten beast
-    if (!p.spoil !== (mode !== 'spoils')) return false; // spoils cards deal only on the spoils leaf
-    if (mode !== 'legendary' && !p.niche && !p.spoil && S.round < fromOf(id)) return false;
-    return true;
-  });
+  let pool = Object.keys(PERKS).filter(id => dealable(id, mode));
   const out = [];
-  const pickW = (ids, w) => { let roll = rnd() * ids.reduce((a, id) => a + w(id), 0); return ids.find(x => (roll -= w(x)) < 0) || ids[ids.length - 1]; };
   if (mode === 'spoils') {
     // two charges, weighed by the charm (Loaded Dice makes the Hourglass and the Googol three times as likely)
     const w = id => ITEMS[PERKS[id].spoil].w * (has('dice') && ['tamper', 'gooble'].includes(PERKS[id].spoil) ? 3 : 1);
@@ -2431,11 +2845,7 @@ function offerPerks(mode) {
     const leg = pool.filter(id => PERKS[id].rarity === 'legendary' && !out.includes(id));
     if (leg.length && !out.some(id => PERKS[id].rarity === 'legendary')) out.push(pickW(leg, () => 1));
   } else pool = pool.filter(id => PERKS[id].rarity !== 'legendary');
-  const weight = id => {
-    if (id === 'rel') return 40;
-    const r = PERKS[id].rarity;
-    return (r === 'legendary' ? 3 + S.round * 1.5 : r === 'rare' ? 22 + S.round : 55) * (PERKS[id].counter ? 2 : 1) * (PERKS[id].needs ? 1.5 : 1);
-  };
+  const weight = id => id === 'rel' ? 40 : perkW(id);
   // from folio 3, one card in an offer may be a new charm instead of a boon
   let left = pool.filter(id => !out.includes(id)).concat(S.round >= 3 && rels.length ? ['rel'] : []);
   while (out.length < 3 && left.length) {
@@ -2451,7 +2861,7 @@ const perkCard = (id, i, armarium = false, attr = 'data-b') => {
   const full = beltTotal() >= BELT_CAP ? 'joins empty' : '';
   const tier = p.niche ? (armarium ? full : ['New charm', full].filter(Boolean).join(' · ')) : p.spoil ? `Charge · ${S.items[p.spoil] || 0} of ${capOf(p.spoil)} held` : [RARITY[p.rarity], has(id) ? `you have ${has(id)}` : ''].filter(Boolean).join(' · ');
   const melts = id === 'oracle' ? GILD_BOONS.filter(has).map(g => PERKS[g].name) : [];
-  const desc = p.desc + (melts.length ? ` It melts ${melts.join(' and ')}.` : '');
+  const desc = p.desc + (melts.length ? ` It melts ${melts.join(' and ')}.` : '') + (id === 'charter' && isOpen('ordeal') ? ' Signing it burns your Ordeal.' : '');
   return `<button class="card r-${p.rarity}" type="button" ${attr}="${id}" style="animation-delay:${i * 90}ms">${cap}${tier ? `<span class="tier">${cap1(tier)}</span>` : ''}<b>${p.name}</b><span>${esc(desc)}</span>${p.rarity === 'legendary' ? '<i class="lz" aria-hidden="true"></i>' : ''}</button>`;
 };
 // `head` is what the word earned (a win or a Book I miss), shown above the cards on the same leaf
@@ -2489,6 +2899,11 @@ function blessingPick(n, mode, then = advance, head = '') {
 const GILD_BOONS = ['gilt', 'beater', 'hints'];
 function takeBoon(id) {
   if (id === 'shirt') S.majorCurses = (S.majorCurses || 0) + 1;
+  if (id === 'charter') { // signing burns the Ordeal off the belt: no curse of yours is cast out again
+    const had = S.open.includes('ordeal');
+    S.open = S.open.filter(x => x !== 'ordeal'); S.items.ordeal = 0;
+    if (had) toast('The Ordeal burns as you sign.', 2600);
+  }
   S.perks[id] = has(id) + 1;
   if (POWERS[id] && !S.open.includes(id)) S.open.push(id);
   if (id === 'oracle') {
@@ -2497,6 +2912,15 @@ function takeBoon(id) {
     for (const g of gone) { delete S.perks[g]; S.open = S.open.filter(x => x !== g); }
     toast(`Your Gild is melted down to light the way${gone.length ? `, and ${gone.map(g => PERKS[g].name).join(' and ')} with it` : ''}.`, 2800);
   }
+}
+// a lasting boon leaves your margin (scraped for a seventh, or swapped at the Relic Fair): a power leaves the belt with it,
+// Foresight gives the Gild back (empty), and the Hammer and the Indulgence take their extra charge with them
+function dropBoon(old) {
+  delete S.perks[old];
+  if (POWERS[old]) S.open = S.open.filter(x => x !== old);
+  if (old === 'oracle') { S.melted = false; if (!S.open.includes('hint')) S.open.unshift('hint'); } // the Gild comes back, empty
+  if (old === 'beater') S.items.hint = Math.min(S.items.hint || 0, capOf('hint'));
+  if (old === 'bryanBless') S.items.chat = Math.min(S.items.chat || 0, capOf('chat'));
 }
 // a seventh lasting boon: scrape one away to make room, or leave the new one on the leaf
 function scrapePick(id, next) {
@@ -2510,20 +2934,89 @@ function scrapePick(id, next) {
   $('go').onclick = () => { toast(`${name} is left on the leaf.`); next(); };
   $('panel').querySelectorAll('[data-s]').forEach(el => el.onclick = () => {
     const old = el.dataset.s;
-    delete S.perks[old];
-    if (POWERS[old]) S.open = S.open.filter(x => x !== old);
-    if (old === 'oracle') { S.melted = false; if (!S.open.includes('hint')) S.open.unshift('hint'); } // the Gild comes back, empty
-    if (old === 'beater') S.items.hint = Math.min(S.items.hint || 0, capOf('hint'));
-    if (old === 'bryanBless') S.items.chat = Math.min(S.items.chat || 0, capOf('chat'));
-    takeBoon(id);
+    dropBoon(old); takeBoon(id);
     toast(`${PERKS[old].name} is scraped away.`);
     renderHud(); renderBelt(); next();
   });
+}
+// ---------- the Relic Fair: his stall, on its folio, in place of the boon leaf ----------
+// three trades, each one of your lasting boons or charms (never the Gild or Brother Bryan) for one of his: a common or rare
+// boon you don't hold, or a charm you haven't found. His side is judged as if yours were already gone (no Concordance for your
+// Index, no Wide Margins for your Penknife; Foresight's going brings the Gild's boons back into play), and the stall is dealt
+// from the word's seed, so a reload deals the same one
+const fairGive = g => { if (ITEMS[g]) { S.open = S.open.filter(x => x !== g); S.items[g] = 0; } else dropBoon(g); }; // a charm goes with its charges
+// the charges his charm joins your belt with: a charm's carry across (to his charm's cap); for a boon, one if the belt has room
+const fairN = (give, get, have) => ITEMS[give] ? Math.min(have, capOf(get)) : beltTotal() < BELT_CAP ? 1 : 0;
+// what he would give for each of yours: [card, charges] pairs, judged as if yours were already gone
+function fairOffers() {
+  const real = S, gives = [...boonIds(), ...charmIds().filter(id => id !== 'hint' && id !== 'chat')], his = {};
+  try {
+    for (const g of gives) {
+      S = JSON.parse(JSON.stringify(real)); fairGive(g);
+      his[g] = Object.keys(PERKS).filter(id => { const p = PERKS[id]; return p.niche ? p.niche !== g && dealable(id, 'niche')
+        : !p.instant && !p.style && !p.beast && p.rarity !== 'legendary' && id !== g && boonIds().length < BOON_CAP && dealable(id, null); })
+        .map(id => [id, PERKS[id].niche ? fairN(g, PERKS[id].niche, real.items[g] || 0) : 0]);
+    }
+  } finally { S = real; }
+  return his;
+}
+// he wants your things in a shuffled order, and offers each a different thing of his (his charms weigh as one card, as on a leaf)
+function fairDeals() {
+  const his = fairOffers(), order = Object.keys(his), out = [], took = new Set();
+  for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+  for (const g of order) {
+    if (out.length >= 3) break;
+    const left = his[g].filter(([id]) => !took.has(id)), nc = left.filter(([id]) => PERKS[id].niche).length;
+    if (!left.length) continue;
+    const [id, n] = pickW(left, ([x]) => PERKS[x].niche ? 40 / nc : perkW(x));
+    took.add(id); out.push({ give: g, get: PERKS[id].niche || id, n });
+  }
+  return out;
+}
+// how a trade names things: "your Index", "the Alms Box" (but "Bryan's Indulgence", "Holy Water", "Wide Margins", "Gilt Edge")
+const yourOf = n => /^(Bryan|Theophilus)'s /.test(n) ? n : 'your ' + n.replace(/^The /, '');
+const theOf = n => /^(Bryan|Theophilus)'s |^(Confession|Holy Water|Wide Margins|Loaded Dice|Concordance|Gilt Edge)$/.test(n) ? n : 'the ' + n.replace(/^The /, '');
+const tradeName = id => (ITEMS[id] || PERKS[id]).name, many = n => /^(Vowel Lamps|Wide Margins|Loaded Dice)$/.test(n);
+// a trade's card is his half, as a boon or charm card, with what he wants for it
+const tradeCard = (d, i) => {
+  const charm = !!ITEMS[d.get], p = PERKS[charm ? 'rel_' + d.get : d.get], have = ITEMS[d.give] ? S.items[d.give] || 0 : 0;
+  const tier = !charm ? RARITY[p.rarity] : 'New charm · ' + (d.n ? pluralW(d.n, 'charge') + (ITEMS[d.give] ? ' carried across' : '') : ITEMS[d.give] ? 'joins empty' : 'joins empty: your belt is full');
+  const goes = have && !charm ? ` and ${have > 1 ? `its ${NUMW[have]} charges` : 'its charge'}` : '';
+  return `<button class="card trade r-${p.rarity}" type="button" data-t="${i}" style="animation-delay:${i * 90}ms"><i class="cap glyph" aria-hidden="true">${charm ? GLYPH[d.get] : boonIcon(d.get)}</i>${tier ? `<span class="tier">${tier}</span>` : ''}<b>${esc(tradeName(d.get))}</b>`
+    + `<span class="swap">He wants ${esc(yourOf(tradeName(d.give)))}${goes}. He offers ${esc(theOf(tradeName(d.get)))}.</span><span>${esc(charm ? descOf(d.get) : p.desc)}</span>${p.rarity === 'legendary' ? '<i class="lz" aria-hidden="true"></i>' : ''}</button>`;
+};
+function fairLeaf(deals, then, head) {
+  const walk = '<button class="btn ghost" id="go" type="button">Walk on</button>';
+  modal(`${head}
+    <div class="eyebrow">The Relic Fair</div>
+    <p class="lede">The Relic Seller has a stall today, and he sells nothing. He swaps.</p>
+    <div class="cards">${deals.map(tradeCard).join('')}</div>
+    ${S.rerolls ? `<div class="btnrow"><button class="btn ghost" id="reroll" type="button">${DIE}Recast the lots · ${S.rerolls} left</button>${walk}</div>` : walk}`);
+  $('go').onclick = then; // walking on takes nothing
+  $('panel').focus({ preventScroll: true }); // not on Walk on: the Enter that turns every other leaf must not throw the prize away
+  if (S.rerolls) $('reroll').onclick = () => { S.rerolls--; fairLeaf(fairDeals(), then, head); };
+  $('panel').querySelectorAll('[data-t]').forEach(el => el.onclick = () => { toast(fairTrade(deals[+el.dataset.t]), 3000); renderHud(); renderBelt(); then(); });
+}
+// a trade is made: yours goes (a boon as a scraped one goes, a charm with its charges), and his joins (a charm in the slot of
+// the charm it was swapped for)
+function fairTrade({ give, get }) {
+  const have = S.items[give] || 0, at = S.open.indexOf(give), charm = !!ITEMS[get];
+  fairGive(give);
+  const n = charm ? fairN(give, get, have) : 0;
+  if (charm) { S.open.splice(ITEMS[give] && at >= 0 ? at : S.open.length, 0, get); S.items[get] = n; } else takeBoon(get);
+  if (charm || POWERS[get]) flyNext.push(get);
+  const gave = tradeName(give), got = tradeName(get);
+  return `${cap1(yourOf(gave))} ${many(gave) ? 'go' : 'goes'} to the Relic Seller. ${cap1(theOf(got))} ${charm ? `joins your belt ${n ? `with ${pluralW(n, 'charge')}` : 'empty'}` : many(got) ? 'are yours' : 'is yours'}.`;
 }
 const curseCard = (id, i, label, n = Math.max(1, rawCount(id)), pickable = false) => `<${pickable ? 'button type="button"' : 'div'} class="card curse${pickable ? ' pick' : ''}"${pickable ? ` data-x="${id}"` : ''} style="animation-delay:${i * 130}ms"><i class="cap glyph" aria-hidden="true">${curseIcon(id)}</i><span class="tier">${label || TIER_NAME[CURSES[id].tier] + ' curse'}</span><b>${CURSES[id].name}</b><span>${esc(CURSES[id].desc(n))}</span></${pickable ? 'button' : 'div'}>`;
 function cleansePick(next, title = 'Exorcism', any = false) {
   const ids = [...new Set(S.curses)].filter(id => any || CURSES[id].tier !== 'nasty');
   const beast = title === 'The beast leaves', eats = beast && squeezeAt(S.round + 1) > squeezeAt(S.round) ? ' It eats a line of your page as it goes.' : '';
+  if (has('charter')) { // Theophilus's Charter: your curses are the devil's, and nothing casts them out
+    if (beast) toast(`${ledBy()}The beast leaves empty-handed: under Theophilus's Charter your curses are the devil's.${eats}`, 3400 + (eats ? 800 : 0));
+    else if (any) toast(`${ledBy()}The Ordeal is passed, but under Theophilus's Charter no curse can be cast out.`, 3400);
+    return next();
+  }
   if (!ids.length) { if (any) toast('The Ordeal is passed, but nothing is left to cast out.', 2400); else if (eats) toast(`The beast leaves.${eats}`, 2600); return next(); }
   modal(`
     <div class="eyebrow">${esc(title)}</div>
@@ -2547,6 +3040,7 @@ function eligible(tiers, extra = [], boss = false, not = []) {
     if (!tiers.includes(c.tier) || not.includes(id)) return false;
     if (all.filter(x => x === id).length >= c.max) return false;
     if (c.tier === 'nasty' && S.round < 14 && all.concat(S.bossCurses).some(x => CURSES[x].tier === 'nasty')) return false; // one Grave curse at a time before folio 14
+    if (apart(id, all.concat(S.bossCurses))) return false;
     if (id === 'fuse' && 6 - all.filter(x => x === 'fuse').length - squeezeAt(S.round) <= 3) return false;
     return true;
   });
@@ -2595,6 +3089,7 @@ function bossLeaf(next) {
     <div class="eyebrow">Folio ${r}</div>
     <h2 class="chaos">${bossName(r)}</h2>
     ${r >= 25 ? '<p class="lede">"Here ends the book," it says. It does not end.</p>' : ''}
+    ${BEAST_RULE[r] ? `<p class="lede">${esc(BEAST_RULE[r])}</p>` : ''}
     <div class="cards">${S.bossCurses.map((id, i) => curseCard(id, i, "Beast's curse · this folio only")).join('')}</div>
     ${squeezeAt(r + 1) > squeezeAt(r) ? '<div class="strip"><b>It is hungry.</b> When it leaves, it eats a line: every word after this folio has one fewer.</div>' : ''}
     <button class="btn chaos" id="go">Begin folio ${r}</button>`);
@@ -2618,6 +3113,7 @@ function advance() {
   S.round++;
   S.bossCurses = [];
   const r = S.round, boss = bossOf(r), steps = [];
+  if (boss && r >= 10) S.fairAt = fairDraw(r); // a beast opens a stretch of Book III: its Relic Fair is drawn now
   closeModal(); busy = true;
   if (r === 5) steps.push(kidnap);
   // a paid ransom brings him back first, so a folio 10 return is asleep under the Aether, not smoked out
@@ -2625,10 +3121,14 @@ function advance() {
   if (back) steps.push(returnBanner);
   if (r === 10) { steps.push(aetherBanner); if (S.bryanState === 'kidnapped' && !back && rawCount('fog') < 2) S.bossCurses.push('fog'); }
   if (boss === 'curse') {
+    // each lays a Grave, or a Major if no Grave is left to give, never the Rule (with the Rubricator's red letter to carry it
+    // would leave hardly a line he need not strike). The Rubricator keeps his Grave: with a Major only, the bots found his
+    // red letters gave more than they took, and folio 15 played easier than the folios before it
     const a = randomCurse(['nasty'], S.bossCurses, true) || randomCurse(['medium'], S.bossCurses, true, ['rule']);
     if (a) S.bossCurses.push(a);
-    if (r >= 20) { const b = randomCurse(['medium'], S.bossCurses, true, ['rule']); if (b) S.bossCurses.push(b); }
-    if (S.bossCurses.length) steps.push(bossLeaf);
+    // the Wyrm keeps its Grave and lays no Major (its dark line is enough); from the Colophon on, a Major as well
+    if (r >= 25) { const b = randomCurse(['medium'], S.bossCurses, true, ['rule']); if (b) S.bossCurses.push(b); }
+    if (S.bossCurses.length || BEAST_RULE[r]) steps.push(bossLeaf);
   }
   if (r === 6) steps.push(poisonPick(['mild']));
   if (r === 8) steps.push(poisonPick(['medium']));
@@ -2679,7 +3179,7 @@ function saveRun() { if (S && S.phase === 'play' && !busy) store.set('ww-run', S
 function migrate(r) {
   if (!r.open) r.open = ITEM_ORDER.filter(id => id === 'hint' || id === 'chat' || (r.items[id] || 0) > 0);
   for (const p in POWERS) if (r.perks && r.perks[p] && !r.open.includes(p)) r.open.push(p);
-  for (const [k, v] of [['gilds', 0], ['struck', []], ['riddled', []], ['seed', 1]]) if (r.w[k] == null) r.w[k] = v;
+  for (const [k, v] of [['gilds', 0], ['struck', []], ['riddled', []], ['seed', 1], ['weighed', 0], ['pinned', false], ['red', ''], ['confessed', '']]) if (r.w[k] == null) r.w[k] = v; // v17: St. Michael's lines, the Wisp caught, the red letter, the curse Bryan bears
   if (!r.v || r.v < 14) {
     // v14: the Séance became Brother Bryan (favours), charms hold one (the Gild two), the belt holds five, the Return is earned
     r.perks = r.perks || {};
@@ -2714,7 +3214,11 @@ function migrate(r) {
     if (!r.open.includes('hint')) r.open.unshift('hint');
   }
   r.w = Object.assign({ penned: (r.rows || []).filter(x => x.by === 'player').length, swings: [], scraped: [], ordealBy: 0 }, r.w);
-  for (const [k, v] of [['paidAt', 0], ['relicDry', false], ['melted', false], ['ordealSeal', false]]) if (r[k] == null) r[k] = v;
+  for (const [k, v] of [['paidAt', 0], ['relicDry', false], ['melted', false], ['ordealSeal', false], ['chainWarned', false]]) if (r[k] == null) r[k] = v; // v17: the Catena's warning
+  // v17: a word saved on the Rubricator's or the Wyrm's folio before they kept rules has the curses they laid then: it keeps them,
+  // and neither rule (no fairAt is the only mark of such a save)
+  if (r.fairAt == null && (r.round === 15 || r.round === 20)) r.w.oldBeast = true;
+  if (r.fairAt == null) r.fairAt = fairDraw(r.round); // v17: a book saved before the Relic Fair holds one in what is left of its stretch
   r.w.aiming = r.w.sketching = r.w.dowsing = false;
   r.curses = (r.curses || []).filter(c => CURSES[c]); r.bossCurses = (r.bossCurses || []).filter(c => CURSES[c]); // the Long Psalm is gone
   // the ransom fell from six BRYANs to four: what was offered still counts, and a ransom it now covers is paid today
@@ -2751,13 +3255,16 @@ function kwInit() { // lazy: BOSS_TIPS and S must exist first
     add('p:' + id, pk.name, () => (POWERS[id] ? 'Power · on your belt' : RARITY[pk.rarity] ? RARITY[pk.rarity] + ' boon' : 'Boon') + (has(id) ? ' · yours' : ''),
       pk.desc, [bare(pk.name)]);
   }
-  for (const id in CURSES) add('c:' + id, CURSES[id].name, () => TIER_NAME[CURSES[id].tier] + ' curse' + (rawCount(id) ? ' · yours' : ''),
-    () => CURSES[id].desc(Math.max(1, rawCount(id))), [bare(CURSES[id].name)]);
+  for (const id in CURSES) { add('c:' + id, CURSES[id].name, () => TIER_NAME[CURSES[id].tier] + ' curse' + (rawCount(id) ? ' · yours' : ''),
+    () => CURSES[id].desc(Math.max(1, rawCount(id))), [bare(CURSES[id].name)]); KW['c:' + id].rail = CURSES[id].rail; }
+  KW_BY["will-o'-the-wisp"] = 'c:wisp'; // as the toast that catches it says it
   add('b:king', 'The Drollery King', 'Beast · folio 5', BOSS_TIPS.king[1], ['Drollery King']);
   add('b:wifi', 'The Aether Is Down', 'Beast · folio 10', BOSS_TIPS.wifi[1].replace(/^[^:]*: (.)/, (_, c) => c.toUpperCase()), ['Aether Is Down', 'Aether']);
   add('b:feast', BOSS_TIPS.feast[0], 'This folio only', BOSS_TIPS.feast[1].replace(/^[^:]*: (.)/, (_, c) => c.toUpperCase()), []); // never ruled in text: a surprise
-  add('b:15', bossName(15), 'Beast · folio 15', 'It writes a Grave curse on its folio, for that folio only (a Major one if no Grave is left to give). When it leaves, it eats a line for good.', [bare(bossName(15))]);
-  add('b:20', bossName(20), 'Beast · folio 20', 'A Grave and a Major curse for its folio. When it leaves, it eats a line for good.', [bare(bossName(20))]);
+  add('b:fair', BOSS_TIPS.fair[0], 'Book III · once between beasts', BOSS_TIPS.fair[1].replace(/^[^:]*: (.)/, (_, c) => c.toUpperCase()), ['Relic Fair']);
+  add('b:15', bossName(15), 'Beast · folio 15', `${BEAST_RULE[15]} It also writes a Grave curse on its folio, for that folio only (a Major one if no Grave is left to give, never the Abbot's Rule). When it leaves, it eats a line for good.`, [bare(bossName(15))]);
+  KW['b:15'].rail = 'Each red letter is struck from your type case, and the one in force is inked red there.'; // said only from its rail icon
+  add('b:20', bossName(20), 'Beast · folio 20', `${BEAST_RULE[20]} It also writes a Grave curse on its folio, for that folio only (a Major one if no Grave is left to give). When it leaves, it eats a line for good.`, [bare(bossName(20))]);
   add('b:25', bossName(25), 'Beast · folio 25, then every fifth', 'A Grave and a Major curse for its folio. At 25, when it leaves, it eats a line for good.', [bare(bossName(25))]);
   add('charm', 'Charms', '', 'Tools on the belt under the page. The belt holds five charges in all. Tap one to read it, then Use it or drag it up.', both('charm', 'charms'), true);
   add('boon', 'Boons', '', 'Blessings you choose after a solved word. You keep six at most; yours sit down the left of the page.', both('boon', 'boons'), true);
@@ -2837,20 +3344,22 @@ function kwEl(k, word, tab) {
   return el;
 }
 let tipFor = null, tipPinned = false, tipHold = null, tipRaf = 0, hoverT = 0;
+// a curse's icon on the rail may say a little more than its card (the Hellmouth's word on Holy Water)
+const tipLine = (term, k) => term.say() + (term.rail && k.closest('.rail') ? ' ' + term.rail : '');
 function showTip(k, pin) {
   if (!KW) kwInit();
   const term = KW[k.dataset.kw]; if (!term || !k.isConnected || !k.getClientRects().length) return;
   const tip = $('tip');
   if (tipFor !== k) {
     hideTip();
-    const kind = k.dataset.kind || term.kind(), line = term.say();
+    const kind = k.dataset.kind || term.kind(), line = tipLine(term, k);
     tip.innerHTML = `<b>${esc(term.name)}${kind ? `<i>${esc(kind)}</i>` : ''}</b>${esc(line)}`;
     tip.hidden = false; tipFor = k; k.classList.add('on');
     if (term.book) { const r = kwReads(); r[k.dataset.kw] = (r[k.dataset.kw] || 0) + 1; store.set('ww-kw-read', r); }
     tipRaf = requestAnimationFrame(watchTip);
   }
   if (pin && !tipPinned) {
-    tipPinned = true; $('sr').textContent = `${term.name}: ${term.say()}`;
+    tipPinned = true; $('sr').textContent = `${term.name}: ${tipLine(term, k)}`;
     // the toast the word sits in waits while you read
     tipHold = k.closest('#toast') ? toastT : null;
     if (tipHold) tipHold.hold();
@@ -2906,7 +3415,7 @@ document.addEventListener('click', e => {
 // a card is taken in two taps: the first marks it, the second takes it, so a tap meant for a ruled word never takes a card
 document.addEventListener('click', e => {
   if (e.defaultPrevented) return; // eaten by the double-tap guard, or it read a word
-  const c = e.target.closest?.('#panel .card[data-b], #panel .card[data-x], #panel .card[data-s]');
+  const c = e.target.closest?.('#panel .card[data-b], #panel .card[data-x], #panel .card[data-s], #panel .card[data-t]');
   if (!c || c.classList.contains('sel')) return;
   e.stopPropagation(); e.preventDefault();
   for (const o of $('panel').querySelectorAll('.card.sel')) { o.classList.remove('sel'); o.querySelector('.again')?.remove(); }
@@ -2993,7 +3502,11 @@ function startRestored() {
     if (!last || !solvedRow(last)) return startRound();
     S.phase = 'won'; closeModal(); buildBoard(); return winRound(last); // the phase first, so nothing reads the short word's pools
   }
-  busy = false; S.w.aiming = S.w.sketching = S.w.dowsing = false; closeModal(); buildBoard(); paintBoard(); renderKb(); renderHud(); renderBelt(); renderLog(); resetTimer();
+  busy = false; S.w.aiming = S.w.sketching = S.w.dowsing = false; closeModal();
+  // a reload between a line and its verdict: the lines before it dry as its verdict would have dried them
+  dryInk(S.rows[S.rows.length - 1]); if (linesLeft() <= 1) dryInk();
+  if (!S.w.red && !S.rows.some(solvedRow)) nameRed(); // a save with no red letter in force names one now (not one from before v17: see migrate)
+  buildBoard(); paintBoard(); renderKb(); renderHud(); renderBelt(); renderLog(); resetTimer();
   // a reload can land between writing a line and its verdict: settle it now
   const last = S.rows[S.rows.length - 1];
   if (last && solvedRow(last)) return winRound(last);
@@ -3001,7 +3514,7 @@ function startRestored() {
   if (S.rows.length >= maxGuesses()) return outOfRows();
   runQueue();
 }
-window.ww = { get S() { return S; }, get busy() { return busy; }, candidates: () => candidates(), seen: () => seenCandidates(), advance: () => advance(), startRound: () => startRound(), offer: m => offerPerks(m), rung: n => { const r = rung(n); return r && Object.fromEntries(Object.entries(r).map(([k, v]) => [k, typeof v === 'string' ? sqFix(v) : v])); }, lines: () => maxGuesses(), ruleBreak: w => ruleBreak(w), belt: () => beltTotal(), boons: () => boonIds(), gildAt: i => gildAt(i), seek: ch => seekLetter(ch), sketch: w => { if (!S.w.sketching) startSketch(); return S.w.sketching ? sketch(w) : undefined; }, call: sure => callBryan(sure), dowseAt: i => dowseAt(i), index: part => openIndex(part), seenGreens: () => [...seenGreens()], fit: () => fitN(), use: id => useSlot(id), redraw: () => { renderBelt(); renderHud(); renderKb(); }, keys: () => keyStates(), toast: (m, ms) => toast(m, ms), modal: (h, c, x) => modal(h, c, x) }; // handy for debugging and tests
+window.ww = { get S() { return S; }, get busy() { return busy; }, candidates: () => candidates(), seen: () => seenCandidates(), advance: () => advance(), startRound: () => startRound(), offer: m => offerPerks(m), rung: n => { const r = rung(n); return r && Object.fromEntries(Object.entries(r).map(([k, v]) => [k, typeof v === 'string' ? sqFix(v) : v])); }, lines: () => maxGuesses(), ruleBreak: w => ruleBreak(w), belt: () => beltTotal(), boons: () => boonIds(), gildAt: i => gildAt(i), seek: ch => seekLetter(ch), sketch: w => { if (!S.w.sketching) startSketch(); return S.w.sketching ? sketch(w) : undefined; }, call: sure => callBryan(sure), dowseAt: i => dowseAt(i), index: part => openIndex(part), seenGreens: () => [...seenGreens()], fit: () => fitN(), use: id => useSlot(id), redraw: () => { renderBelt(); renderHud(); renderKb(); }, keys: () => keyStates(), toast: (m, ms) => toast(m, ms), modal: (h, c, x) => modal(h, c, x), brood: () => [...broodOf(poolFor(S.len))], link: () => chainLink(), reqs: () => rowReqs(), eligible: (tiers, extra, boss, not) => eligible(tiers, extra, boss, not), commit: (w, by) => commit(w, by), ready: id => powerReady(id), knife: () => knifeRow(), wisp: () => ({ loose: wispLoose(), pinned: !!S.w.pinned, probes: wispProbes() }), pinWisp: () => pinWisp(), rubric: ch => { if (ch) { S.w.red = ch; S.w.dowsed[ch] = 'absent'; } else nameRed(); paintRow(S.rows.length, false); renderKb(); return S.w.red; }, canConfess: () => confessOk(), bearable: () => bearable(), confess: id => id ? confess(id) : confessPick(), take: id => takeBoon(id), drop: id => dropBoon(id), fair: () => fairDeals(), offers: () => Object.fromEntries(Object.entries(fairOffers()).map(([g, l]) => [g, l.map(([id]) => PERKS[id].niche || id)])), fairDraw: n => fairDraw(n), trade: d => fairTrade(d), cleanse: (title, any) => { let went = false; cleansePick(() => went = true, title, any); return went; } }; // handy for debugging and tests
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 })();
 </script>
